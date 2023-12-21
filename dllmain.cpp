@@ -27,6 +27,7 @@ static std::map<void*, bool> monsterChecked;
 static std::mutex lock;
 static struct Monster monsters[102];
 static std::string language;
+static std::string omessages[5];
 static bool isInit=false;
 
 using namespace loader;
@@ -43,14 +44,16 @@ void handleMonsterCreated(int id, undefined* monster)
 		std::unique_lock l(lock);
 		monsterMessages[monster] = messages;
 		if (monsters[id].Capture != 0) {
-			if (language == "us") {
-				monsterMessages[monster].push({ monsters[id].Capture / 100, "<STYL MOJI_RED_DEFAULT> is ready to be captured(" + std::to_string(int(monsters[id].Capture)) + "%)" + "</STYL>" });
-			}
-			else if (language == "jp") {
-				monsterMessages[monster].push({ monsters[id].Capture / 100, "<STYL MOJI_RED_DEFAULT>を捕獲できます(" + std::to_string(int(monsters[id].Capture)) + "%)" + "</STYL>" });
-			}
-			else {
-				monsterMessages[monster].push({ monsters[id].Capture / 100, "<STYL MOJI_RED_DEFAULT>可以捕获了(" + std::to_string(int(monsters[id].Capture)) + "%)" + "</STYL>" });
+			bool isAdd = false;
+			int c = monsterMessages[monster].size();
+			for (int i = 0; i < c; i++) {
+				LOG(INFO) << monsterMessages[monster].front().first;
+				if (!isAdd && monsters[id].Capture / 100 >= monsterMessages[monster].front().first) {
+					monsterMessages[monster].push({ monsters[id].Capture / 100, omessages[0] });
+					isAdd = true;
+				}
+				monsterMessages[monster].push(monsterMessages[monster].front());
+				monsterMessages[monster].pop();
 			}
 		}
 		isInit = false;
@@ -72,7 +75,7 @@ void checkHealth(void* monster) {
 	auto& monsterQueue = monsterMessages[monster];
 	std::string lastMessage;
 	while (!monsterQueue.empty() && health / maxHealth < monsterQueue.front().first) {
-		lastMessage = "<STYL MOJI_YELLOW_DEFAULT>" + monsters[monsterId].Name + monsterQueue.front().second + "</STYL>";
+		lastMessage = monsters[monsterId].Name + ": " + monsterQueue.front().second;
 		LOG(INFO) << "Message: " << lastMessage;
 		showMessage(lastMessage);
 		monsterQueue.pop();
@@ -93,51 +96,21 @@ void checkMonsterSize(void* monster) {
 	struct Monster Monster = monsters[monsterId];
 
 	std::string size;
-	if (language == "us") {
-		if (monsterSizeMultiplier >= Monster.Gold) {
-			size = " size is <STYL MOJI_RED_DEFAULT>big crown</STYL>";
-		}
-		else if (monsterSizeMultiplier >= Monster.Silver) {
-			size = " size is <STYL MOJI_YELLOW_DEFAULT>big silver</STYL>";
-		}
-		else if (monsterSizeMultiplier <= Monster.Mini) {
-			size = " size is <STYL MOJI_RED_DEFAULT>small crown</STYL>";
-		}
-		else {
-			size = " size is normal size";
-		}
+	if (monsterSizeMultiplier >= Monster.Gold) {
+		size = omessages[1];
 	}
-	else if (language == "jp") {
-		if (monsterSizeMultiplier >= Monster.Gold) {
-			size = "サイズは<STYL MOJI_RED_DEFAULT>大金</STYL>";
-		}
-		else if (monsterSizeMultiplier >= Monster.Silver) {
-			size = "サイズは<STYL MOJI_YELLOW_DEFAULT>大银</STYL>";
-		}
-		else if (monsterSizeMultiplier <= Monster.Mini) {
-			size = "サイズは<STYL MOJI_RED_DEFAULT>小金</STYL>";
-		}
-		else {
-			size = "サイズは通常サイズ";
-		}
+	else if (monsterSizeMultiplier >= Monster.Silver) {
+		size = omessages[2];
+	}
+	else if (monsterSizeMultiplier <= Monster.Mini) {
+		size = omessages[3];
 	}
 	else {
-		if (monsterSizeMultiplier >= Monster.Gold) {
-			size = "尺寸是<STYL MOJI_RED_DEFAULT>大金</STYL>";
-		}
-		else if (monsterSizeMultiplier >= Monster.Silver) {
-			size = "尺寸是<STYL MOJI_YELLOW_DEFAULT>大银</STYL>";
-		}
-		else if (monsterSizeMultiplier <= Monster.Mini) {
-			size = "尺寸是<STYL MOJI_RED_DEFAULT>小金</STYL>";
-		}
-		else {
-			size = "尺寸是普通大小";
-		}
+		size = omessages[4];
 	}
 
 	std::stringstream ss;
-	ss << Monster.Name << size;
+	ss << Monster.Name + ": " << size;
 	std::string msg = ss.str();
 	showMessage(msg);
 }
@@ -167,18 +140,14 @@ __declspec(dllexport) extern bool Load()
 	file >> ConfigFile;
 
 	language = ConfigFile["Language"];
-
-	for (auto ratio : ConfigFile["HealthRatio"])
+	omessages[0] = ConfigFile["Capture"];
+	omessages[1] = ConfigFile["Bigcrown"];
+	omessages[2] = ConfigFile["Bigsilver"];
+	omessages[3] = ConfigFile["Smallcrown"];
+	omessages[4] = ConfigFile["Normalsize"];
+	for (auto obj : ConfigFile["RatioMessages"])
 	{
-		if (language == "us") {
-			messages.push({ ratio, " have " + std::to_string(int(double(ratio) * 100)) + "% remaining hp" });
-		}
-		else if(language == "jp"){
-			messages.push({ ratio, "のhpは残り" + std::to_string(int(double(ratio) * 100)) + "%" });
-		}
-		else {
-			messages.push({ ratio, "血量还剩" + std::to_string(int(double(ratio) * 100)) + "%" });
-		}
+		messages.push({ obj["ratio"], obj["msg"] });
 	}
 	int index = 0;
 	for (auto obj : ConfigFile["Monsters"])
