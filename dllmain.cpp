@@ -44,13 +44,13 @@ void handleMonsterCreated(int id, undefined* monster)
 		monsterMessages[monster] = messages;
 		if (monsters[id].Capture != 0) {
 			if (language == "us") {
-				monsterMessages[monster].push({ monsters[id].Capture / 100, "<STYL MOJI_RED_DEFAULT>" + monsters[id].Name + " is ready to be captured(" + std::to_string(int(monsters[id].Capture)) + "%)" + "</STYL>" });
+				monsterMessages[monster].push({ monsters[id].Capture / 100, "<STYL MOJI_RED_DEFAULT> is ready to be captured(" + std::to_string(int(monsters[id].Capture)) + "%)" + "</STYL>" });
 			}
 			else if (language == "jp") {
-				monsterMessages[monster].push({ monsters[id].Capture / 100, "<STYL MOJI_RED_DEFAULT>" + monsters[id].Name + "を捕獲できます(" + std::to_string(int(monsters[id].Capture)) + "%)" + "</STYL>" });
+				monsterMessages[monster].push({ monsters[id].Capture / 100, "<STYL MOJI_RED_DEFAULT>を捕獲できます(" + std::to_string(int(monsters[id].Capture)) + "%)" + "</STYL>" });
 			}
 			else {
-				monsterMessages[monster].push({ monsters[id].Capture / 100, "<STYL MOJI_RED_DEFAULT>" + monsters[id].Name + "可以捕获了(" + std::to_string(int(monsters[id].Capture)) + "%)" + "</STYL>" });
+				monsterMessages[monster].push({ monsters[id].Capture / 100, "<STYL MOJI_RED_DEFAULT>可以捕获了(" + std::to_string(int(monsters[id].Capture)) + "%)" + "</STYL>" });
 			}
 		}
 		isInit = false;
