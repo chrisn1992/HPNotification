@@ -26,6 +26,7 @@ static std::map<void*, std::queue<std::pair<float, std::string>>> monsterMessage
 static std::map<void*, bool> monsterChecked;
 static std::mutex lock;
 static struct Monster monsters[102];
+static std::string language;
 static bool isInit=false;
 
 using namespace loader;
@@ -42,7 +43,15 @@ void handleMonsterCreated(int id, undefined* monster)
 		std::unique_lock l(lock);
 		monsterMessages[monster] = messages;
 		if (monsters[id].Capture != 0) {
-			monsterMessages[monster].push({ monsters[id].Capture, "<STYL MOJI_RED_DEFAULT>" + monsters[id].Name+"可以捕获了" + "</STYL>" });
+			if (language == "us") {
+				monsterMessages[monster].push({ monsters[id].Capture / 100, "<STYL MOJI_RED_DEFAULT>" + monsters[id].Name + " is ready to be captured(" + std::to_string(int(monsters[id].Capture)) + "%)" + "</STYL>" });
+			}
+			else if (language == "jp") {
+				monsterMessages[monster].push({ monsters[id].Capture / 100, "<STYL MOJI_RED_DEFAULT>" + monsters[id].Name + "を捕獲できます(" + std::to_string(int(monsters[id].Capture)) + "%)" + "</STYL>" });
+			}
+			else {
+				monsterMessages[monster].push({ monsters[id].Capture / 100, "<STYL MOJI_RED_DEFAULT>" + monsters[id].Name + "可以捕获了(" + std::to_string(int(monsters[id].Capture)) + "%)" + "</STYL>" });
+			}
 		}
 		isInit = false;
 		monsterChecked[monster] = false;
@@ -84,21 +93,51 @@ void checkMonsterSize(void* monster) {
 	struct Monster Monster = monsters[monsterId];
 
 	std::string size;
-	if (monsterSizeMultiplier >= Monster.Gold) {
-		size = "<STYL MOJI_RED_DEFAULT>大金</STYL>";
+	if (language == "us") {
+		if (monsterSizeMultiplier >= Monster.Gold) {
+			size = " size is <STYL MOJI_RED_DEFAULT>big crown</STYL>";
+		}
+		else if (monsterSizeMultiplier >= Monster.Silver) {
+			size = " size is <STYL MOJI_YELLOW_DEFAULT>big silver</STYL>";
+		}
+		else if (monsterSizeMultiplier <= Monster.Mini) {
+			size = " size is <STYL MOJI_RED_DEFAULT>small crown</STYL>";
+		}
+		else {
+			size = " size is normal size";
+		}
 	}
-	else if (monsterSizeMultiplier >= Monster.Silver) {
-		size = "<STYL MOJI_YELLOW_DEFAULT>大银</STYL>";
-	}
-	else if (monsterSizeMultiplier <= Monster.Mini) {
-		size = "<STYL MOJI_RED_DEFAULT>小金</STYL>";
+	else if (language == "jp") {
+		if (monsterSizeMultiplier >= Monster.Gold) {
+			size = "サイズは<STYL MOJI_RED_DEFAULT>大金</STYL>";
+		}
+		else if (monsterSizeMultiplier >= Monster.Silver) {
+			size = "サイズは<STYL MOJI_YELLOW_DEFAULT>大银</STYL>";
+		}
+		else if (monsterSizeMultiplier <= Monster.Mini) {
+			size = "サイズは<STYL MOJI_RED_DEFAULT>小金</STYL>";
+		}
+		else {
+			size = "サイズは通常サイズ";
+		}
 	}
 	else {
-		size = "普通大小";
+		if (monsterSizeMultiplier >= Monster.Gold) {
+			size = "尺寸是<STYL MOJI_RED_DEFAULT>大金</STYL>";
+		}
+		else if (monsterSizeMultiplier >= Monster.Silver) {
+			size = "尺寸是<STYL MOJI_YELLOW_DEFAULT>大银</STYL>";
+		}
+		else if (monsterSizeMultiplier <= Monster.Mini) {
+			size = "尺寸是<STYL MOJI_RED_DEFAULT>小金</STYL>";
+		}
+		else {
+			size = "尺寸是普通大小";
+		}
 	}
 
 	std::stringstream ss;
-	ss << Monster.Name << "尺寸是" << size;
+	ss << Monster.Name << size;
 	std::string msg = ss.str();
 	showMessage(msg);
 }
@@ -127,16 +166,34 @@ __declspec(dllexport) extern bool Load()
 	nlohmann::json ConfigFile = nlohmann::json::object();
 	file >> ConfigFile;
 
+	language = ConfigFile["Language"];
+
 	for (auto ratio : ConfigFile["HealthRatio"])
 	{
-		messages.push({ ratio, "血量还剩"+ std::to_string(int(double(ratio) * 100)) + "%" });
+		if (language == "us") {
+			messages.push({ ratio, " have " + std::to_string(int(double(ratio) * 100)) + "% remaining hp" });
+		}
+		else if(language == "jp"){
+			messages.push({ ratio, "のhpは残り" + std::to_string(int(double(ratio) * 100)) + "%" });
+		}
+		else {
+			messages.push({ ratio, "血量还剩" + std::to_string(int(double(ratio) * 100)) + "%" });
+		}
 	}
 	int index = 0;
 	for (auto obj : ConfigFile["Monsters"])
 	{
 		index = obj["Id"];
 		monsters[index].Id = obj["Id"];
-		monsters[index].Name = obj["Name"];
+		if (language == "us") {
+			monsters[index].Name = obj["USName"];
+		}
+		else if (language == "jp") {
+			monsters[index].Name = obj["JPName"];
+		}
+		else {
+			monsters[index].Name = obj["Name"];
+		}
 		monsters[index].Capture = obj["Capture"];
 		monsters[index].Mini = obj["Mini"];
 		monsters[index].Silver = obj["Silver"];

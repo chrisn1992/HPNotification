@@ -1,5 +1,7 @@
 {
-    "HealthRatio": [0.6,0.4],
+    "/*Language*/": "us=english,jp=japanese,cn=chinese",
+    "Language": "us",
+    "HealthRatio": [ 0.6, 0.4 ],
     "Monsters": [
         {
             "Id": 0,
@@ -7,7 +9,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.1,
-            "Gold": 1.2
+            "Gold": 1.2,
+            "USName": "Anjanath",
+            "JPName": "アンジャナフ"
         },
         {
             "Id": 1,
@@ -15,7 +19,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Rathalos",
+            "JPName": "リオレウス"
         },
         {
             "Id": 4,
@@ -23,7 +29,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Zorah Magdaros",
+            "JPName": "ゾラ・マグダラオス"
         },
         {
             "Id": 7,
@@ -31,7 +39,9 @@
             "Capture": 30,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Great Jagras",
+            "JPName": "ドスジャグラス"
         },
         {
             "Id": 9,
@@ -39,7 +49,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Rathian",
+            "JPName": "リオレイア"
         },
         {
             "Id": 10,
@@ -47,7 +59,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Pink Rathian",
+            "JPName": "リオレイア亜種"
         },
         {
             "Id": 11,
@@ -55,7 +69,9 @@
             "Capture": 15,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Azure Rathalos",
+            "JPName": "リオレウス亜種"
         },
         {
             "Id": 12,
@@ -63,7 +79,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Diablos",
+            "JPName": "ディアブロス"
         },
         {
             "Id": 13,
@@ -71,7 +89,9 @@
             "Capture": 15,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Black Diablos",
+            "JPName": "ディアブロス亜種"
         },
         {
             "Id": 14,
@@ -79,7 +99,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Kirin",
+            "JPName": "キリン"
         },
         {
             "Id": 15,
@@ -87,7 +109,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Behemoth",
+            "JPName": "ベヒーモス"
         },
         {
             "Id": 16,
@@ -95,7 +119,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Kushala Daora",
+            "JPName": "クシャルダオラ"
         },
         {
             "Id": 17,
@@ -103,7 +129,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Lunastra",
+            "JPName": "ナナ・テスカトリ"
         },
         {
             "Id": 18,
@@ -111,7 +139,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Teostra",
+            "JPName": "テオ・テスカトル"
         },
         {
             "Id": 19,
@@ -119,7 +149,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Lavasioth",
+            "JPName": "ヴォルガノス"
         },
         {
             "Id": 20,
@@ -127,7 +159,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.1,
-            "Gold": 1.2
+            "Gold": 1.2,
+            "USName": "Deviljho",
+            "JPName": "イビルジョー"
         },
         {
             "Id": 21,
@@ -135,7 +169,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Barroth",
+            "JPName": "ボルボロス"
         },
         {
             "Id": 22,
@@ -143,7 +179,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.1,
-            "Gold": 1.2
+            "Gold": 1.2,
+            "USName": "Uragaan",
+            "JPName": "ウラガンキン"
         },
         {
             "Id": 23,
@@ -151,7 +189,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Leshen",
+            "JPName": "レーシェン"
         },
         {
             "Id": 24,
@@ -159,7 +199,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.1,
-            "Gold": 1.2
+            "Gold": 1.2,
+            "USName": "Pukei-Pukei",
+            "JPName": "プケプケ"
         },
         {
             "Id": 25,
@@ -167,7 +209,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Nergigante",
+            "JPName": "ネルギガンテ"
         },
         {
             "Id": 26,
@@ -175,7 +219,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Xeno'jiiva",
+            "JPName": "ゼノ・ジーヴァ"
         },
         {
             "Id": 27,
@@ -183,7 +229,9 @@
             "Capture": 30,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Kulu-Ya-Ku",
+            "JPName": "クルルヤック"
         },
         {
             "Id": 28,
@@ -191,7 +239,9 @@
             "Capture": 30,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Tzitzi-Ya-Ku",
+            "JPName": "ツィツィヤック"
         },
         {
             "Id": 29,
@@ -199,7 +249,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Jyuratodus",
+            "JPName": "ジュラトドス"
         },
         {
             "Id": 30,
@@ -207,7 +259,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.1,
-            "Gold": 1.2
+            "Gold": 1.2,
+            "USName": "Tobi-Kadachi",
+            "JPName": "トビカガチ"
         },
         {
             "Id": 31,
@@ -215,7 +269,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Paolumu",
+            "JPName": "パオウルムー"
         },
         {
             "Id": 32,
@@ -223,7 +279,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Legiana",
+            "JPName": "レイギエナ"
         },
         {
             "Id": 33,
@@ -231,7 +289,9 @@
             "Capture": 30,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Great Girros",
+            "JPName": "ドスギルオス"
         },
         {
             "Id": 34,
@@ -239,7 +299,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Odogaron",
+            "JPName": "オドガロン"
         },
         {
             "Id": 35,
@@ -247,7 +309,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.1,
-            "Gold": 1.2
+            "Gold": 1.2,
+            "USName": "Radobaan",
+            "JPName": "ラドバルキン"
         },
         {
             "Id": 36,
@@ -255,7 +319,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Vaal Hazak",
+            "JPName": "ヴァルハザク"
         },
         {
             "Id": 37,
@@ -263,7 +329,9 @@
             "Capture": 30,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Dodogama",
+            "JPName": "ドドガマル"
         },
         {
             "Id": 38,
@@ -271,7 +339,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Kulve Taroth",
+            "JPName": "マム・タロト"
         },
         {
             "Id": 39,
@@ -279,7 +349,9 @@
             "Capture": 30,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Bazelgeuse",
+            "JPName": "バゼルギウス"
         },
         {
             "Id": 51,
@@ -287,7 +359,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Ancient Leshen",
+            "JPName": "エンシェント・レーシェン"
         },
         {
             "Id": 61,
@@ -295,7 +369,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Tigrex",
+            "JPName": "ティガレックス"
         },
         {
             "Id": 62,
@@ -303,7 +379,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Nargacuga",
+            "JPName": "ナルガクルガ"
         },
         {
             "Id": 63,
@@ -311,7 +389,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Barioth",
+            "JPName": "ベリオロス"
         },
         {
             "Id": 64,
@@ -319,7 +399,9 @@
             "Capture": 10,
             "Mini": 0.99,
             "Silver": 1.14,
-            "Gold": 1.2
+            "Gold": 1.2,
+            "USName": "Savage Deviljho",
+            "JPName": "怒り喰らうイビルジョー"
         },
         {
             "Id": 65,
@@ -327,7 +409,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Brachydios",
+            "JPName": "ブラキディオス"
         },
         {
             "Id": 66,
@@ -335,7 +419,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.1,
-            "Gold": 1.2
+            "Gold": 1.2,
+            "USName": "Glavenus",
+            "JPName": "ディノバルド"
         },
         {
             "Id": 67,
@@ -343,7 +429,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.1,
-            "Gold": 1.2
+            "Gold": 1.2,
+            "USName": "Acidic Glavenus",
+            "JPName": "ディノバルド亜種"
         },
         {
             "Id": 68,
@@ -351,7 +439,9 @@
             "Capture": 15,
             "Mini": 0.9,
             "Silver": 1.1,
-            "Gold": 1.2
+            "Gold": 1.2,
+            "USName": "Fulgur Anjanath",
+            "JPName": "アンジャナフ亜種"
         },
         {
             "Id": 69,
@@ -359,7 +449,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.1,
-            "Gold": 1.2
+            "Gold": 1.2,
+            "USName": "Coral Pukei-Pukei",
+            "JPName": "プケプケ亜種"
         },
         {
             "Id": 70,
@@ -367,7 +459,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Ruiner Nergigante",
+            "JPName": "悉くを殲ぼすネルギガンテ"
         },
         {
             "Id": 71,
@@ -375,7 +469,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.1,
-            "Gold": 1.2
+            "Gold": 1.2,
+            "USName": "Viper Tobi-Kadachi",
+            "JPName": "トビカガチ亜種"
         },
         {
             "Id": 72,
@@ -383,7 +479,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Nightshade Paolumu",
+            "JPName": "パオウルムー亜種"
         },
         {
             "Id": 73,
@@ -391,7 +489,9 @@
             "Capture": 15,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Shrieking Legiana",
+            "JPName": "レイギエナ亜種"
         },
         {
             "Id": 74,
@@ -399,7 +499,9 @@
             "Capture": 15,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Ebony Odogaron",
+            "JPName": "オドガロン亜種"
         },
         {
             "Id": 75,
@@ -407,7 +509,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Blackveil Vaal Hazak",
+            "JPName": "死を纏うヴァルハザク"
         },
         {
             "Id": 76,
@@ -415,7 +519,9 @@
             "Capture": 10,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Seething Bazelgeuse",
+            "JPName": "紅蓮滾るバゼルギウス"
         },
         {
             "Id": 77,
@@ -423,7 +529,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Beotodus",
+            "JPName": "ブラントドス"
         },
         {
             "Id": 78,
@@ -431,7 +539,9 @@
             "Capture": 25,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Banbaro",
+            "JPName": "バフバロ"
         },
         {
             "Id": 79,
@@ -439,7 +549,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Velkhana",
+            "JPName": "イヴェルカーナ"
         },
         {
             "Id": 80,
@@ -447,7 +559,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Namielle",
+            "JPName": "ネロミェール"
         },
         {
             "Id": 81,
@@ -455,7 +569,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Shara Ishvalda",
+            "JPName": "アン・イシュワルダ"
         },
         {
             "Id": 87,
@@ -463,7 +579,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Alatreon",
+            "JPName": "アルバトリオン"
         },
         {
             "Id": 88,
@@ -471,7 +589,9 @@
             "Capture": 10,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Gold Rathian",
+            "JPName": "リオレイア希少種"
         },
         {
             "Id": 89,
@@ -479,7 +599,9 @@
             "Capture": 10,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Silver Rathalos",
+            "JPName": "リオレウス希少種"
         },
         {
             "Id": 90,
@@ -487,7 +609,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Yian Garuga",
+            "JPName": "イャンガルルガ"
         },
         {
             "Id": 91,
@@ -495,7 +619,9 @@
             "Capture": 15,
             "Mini": 0.9,
             "Silver": 1.11,
-            "Gold": 1.18
+            "Gold": 1.18,
+            "USName": "Rajang",
+            "JPName": "ラージャン"
         },
         {
             "Id": 92,
@@ -503,7 +629,9 @@
             "Capture": 10,
             "Mini": 0.9,
             "Silver": 1.11,
-            "Gold": 1.18
+            "Gold": 1.18,
+            "USName": "Furious Rajang",
+            "JPName": "激昂したラージャン"
         },
         {
             "Id": 93,
@@ -511,7 +639,9 @@
             "Capture": 15,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Brute Tigrex",
+            "JPName": "ティガレックス亜種"
         },
         {
             "Id": 94,
@@ -519,7 +649,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Zinogre",
+            "JPName": "ジンオウガ"
         },
         {
             "Id": 95,
@@ -527,7 +659,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Stygian Zinogre",
+            "JPName": "ジンオウガ亜種"
         },
         {
             "Id": 96,
@@ -535,7 +669,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Raging Brachydios",
+            "JPName": "猛り爆ぜるブラキディオス"
         },
         {
             "Id": 97,
@@ -543,7 +679,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Safi'jiiva",
+            "JPName": "ムフェト・ジーヴァ"
         },
         {
             "Id": 98,
@@ -551,7 +689,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Training Dummy",
+            "JPName": "荷車"
         },
         {
             "Id": 99,
@@ -559,7 +699,9 @@
             "Capture": 15,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Scarred Yian Garuga",
+            "JPName": "傷ついたイャンガルルガ"
         },
         {
             "Id": 100,
@@ -567,7 +709,9 @@
             "Capture": 20,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Frostfang Barioth",
+            "JPName": "氷刃佩くベリオロス"
         },
         {
             "Id": 101,
@@ -575,7 +719,9 @@
             "Capture": 0,
             "Mini": 0.9,
             "Silver": 1.15,
-            "Gold": 1.23
+            "Gold": 1.23,
+            "USName": "Fatalis",
+            "JPName": "ミラボレアス"
         }
     ]
 }
