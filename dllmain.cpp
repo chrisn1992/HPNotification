@@ -3,6 +3,7 @@
 #include <queue>
 #include <functional>
 #include <mutex>
+#include <filesystem>
 
 #include <windows.h>
 
@@ -75,7 +76,7 @@ void checkHealth(void* monster) {
 	auto& monsterQueue = monsterMessages[monster];
 	std::string lastMessage;
 	while (!monsterQueue.empty() && health / maxHealth < monsterQueue.front().first) {
-		lastMessage = monsters[monsterId].Name + ": " + monsterQueue.front().second;
+		lastMessage = monsters[monsterId].Name + monsterQueue.front().second;
 		LOG(INFO) << "Message: " << lastMessage;
 		showMessage(lastMessage);
 		monsterQueue.pop();
@@ -110,7 +111,7 @@ void checkMonsterSize(void* monster) {
 	}
 
 	std::stringstream ss;
-	ss << Monster.Name + ": " << size;
+	ss << Monster.Name << size;
 	std::string msg = ss.str();
 	showMessage(msg);
 }
@@ -123,12 +124,28 @@ CreateHook(MH::Monster::ctor, ConstructMonster, void*, void* this_ptr, unsigned 
 
 __declspec(dllexport) extern bool Load()
 {
-	if (std::string(GameVersion) != "421652") {
-		LOG(ERR) << "Health Notes : Wrong version";
-		return false;
+	std::string nativePCPath = "nativePC";
+
+	// check if using ICE mod
+	if (std::filesystem::exists("ICE")) {
+		if (std::filesystem::is_directory("ICE")) {
+			nativePCPath = "ICE/ntPC";
+		}
+
+		// check only first 3 digit for ICE
+		if (std::string(GameVersion).rfind("314", 0) != 0) {
+			LOG(ERR) << "Health Notes : Wrong ICE version";
+			return false;
+		}
+	}
+	else {
+		if (std::string(GameVersion) != "421652") {
+			LOG(ERR) << "Health Notes : Wrong version";
+			return false;
+		}
 	}
 
-	std::ifstream file("nativePC/plugins/HealthNotes.json");
+	std::ifstream file(nativePCPath.append("/plugins/HealthNotes.json"));
 	if (file.fail()) {
 		LOG(ERR) << "Health notes : Monster data file not found";
 		return false;

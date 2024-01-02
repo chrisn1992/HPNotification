@@ -1,22 +1,22 @@
 {
     "/*Language(show different language monster name)*/": "us=english,jp=japanese,cn=chinese",
     "Language": "us",
-    "Capture": "<STYL MOJI_RED_DEFAULT>I'm ready to be captured</STYL>",
-    "Bigcrown": "<STYL MOJI_RED_DEFAULT>I'm very big</STYL>",
-    "Bigsilver": "<STYL MOJI_YELLOW_DEFAULT>I'm a little big</STYL>",
-    "Smallcrown": "<STYL MOJI_RED_DEFAULT>I'm very small</STYL>",
-    "Normalsize": "I'm of average size",
+    "Capture": "<STYL MOJI_RED_DEFAULT> is ready to be captured</STYL>",
+    "Bigcrown": "<STYL MOJI_RED_DEFAULT> is very big</STYL>",
+    "Bigsilver": "<STYL MOJI_YELLOW_DEFAULT> is a little big</STYL>",
+    "Smallcrown": "<STYL MOJI_RED_DEFAULT> is very small</STYL>",
+    "Normalsize": " is of average size",
     "RatioMessages": [
         {
-            "msg": "The monster is showing\n<STYL MOJI_YELLOW_DEFAULT>signs of moderate injuries</STYL>.",
+            "msg": "<STYL MOJI_YELLOW_DEFAULT> signs of moderate injuries</STYL>.",
             "ratio": 0.50
         },
         {
-            "msg": "The monster is showing\n<STYL MOJI_ORANGE_DEFAULT>signs of severe injuries</STYL>.",
+            "msg": "<STYL MOJI_ORANGE_DEFAULT> signs of severe injuries</STYL>.",
             "ratio": 0.25
         },
         {
-            "msg": "<STYL MOJI_RED_DEFAULT>The monster is critically injured !</STYL>",
+            "msg": "<STYL MOJI_RED_DEFAULT> is critically injured !</STYL>",
             "ratio": 0.1
         }
     ],
