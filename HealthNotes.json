@@ -1,6 +1,7 @@
 {
     "/*Language(show different language monster name)*/": "us=english,jp=japanese,cn=chinese",
     "Language": "us",
+    "DisplayCapture": true,
     "Capture": "<STYL MOJI_RED_DEFAULT> is ready to be captured</STYL>",
     "Bigcrown": "<STYL MOJI_RED_DEFAULT> is very big</STYL>",
     "Bigsilver": "<STYL MOJI_YELLOW_DEFAULT> is a little big</STYL>",

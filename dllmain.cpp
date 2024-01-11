@@ -30,6 +30,7 @@ static struct Monster monsters[102];
 static std::string language;
 static std::string omessages[5];
 static bool isInit=false;
+static bool displayCapture = true;
 
 using namespace loader;
 
@@ -44,7 +45,7 @@ void handleMonsterCreated(int id, undefined* monster)
 		LOG(INFO) << "Setting up health messages for " << monsterPath;
 		std::unique_lock l(lock);
 		monsterMessages[monster] = messages;
-		if (monsters[id].Capture != 0) {
+		if (displayCapture && monsters[id].Capture != 0) {
 			bool isAdd = false;
 			int c = monsterMessages[monster].size();
 			for (int i = 0; i < c; i++) {
@@ -133,17 +134,17 @@ __declspec(dllexport) extern bool Load()
 		}
 
 		// check only first 3 digit for ICE
-		if (std::string(GameVersion).rfind("314", 0) != 0) {
+		/*if (std::string(GameVersion).rfind("314", 0) != 0) {
 			LOG(ERR) << "Health Notes : Wrong ICE version";
 			return false;
-		}
+		}*/
 	}
-	else {
+	/*else {
 		if (std::string(GameVersion) != "421652") {
 			LOG(ERR) << "Health Notes : Wrong version";
 			return false;
 		}
-	}
+	}*/
 
 	std::ifstream file(nativePCPath.append("/plugins/HealthNotes.json"));
 	if (file.fail()) {
@@ -157,6 +158,7 @@ __declspec(dllexport) extern bool Load()
 	file >> ConfigFile;
 
 	language = ConfigFile["Language"];
+	displayCapture = ConfigFile["DisplayCapture"];
 	omessages[0] = ConfigFile["Capture"];
 	omessages[1] = ConfigFile["Bigcrown"];
 	omessages[2] = ConfigFile["Bigsilver"];
