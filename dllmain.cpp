@@ -3,6 +3,7 @@
 #include <queue>
 #include <functional>
 #include <mutex>
+#include <algorithm>
 #include <filesystem>
 
 #include <windows.h>
@@ -77,7 +78,12 @@ void checkHealth(void* monster) {
 	auto& monsterQueue = monsterMessages[monster];
 	std::string lastMessage;
 	while (!monsterQueue.empty() && health / maxHealth < monsterQueue.front().first) {
-		lastMessage = monsters[monsterId].Name + monsterQueue.front().second;
+		lastMessage = monsterQueue.front().second;
+		std::string re = "monstername";
+		while (lastMessage.find(re) != std::string::npos) {
+			size_t pos = lastMessage.find(re);
+			lastMessage.replace(pos, re.length(), monsters[monsterId].Name);
+		}
 		LOG(INFO) << "Message: " << lastMessage;
 		showMessage(lastMessage);
 		monsterQueue.pop();
@@ -111,10 +117,13 @@ void checkMonsterSize(void* monster) {
 		size = omessages[4];
 	}
 
-	std::stringstream ss;
-	ss << Monster.Name << size;
-	std::string msg = ss.str();
-	showMessage(msg);
+	std::string re = "monstername";
+	while (size.find(re) != std::string::npos) {
+		size_t pos = size.find(re);
+		size.replace(pos, re.length(), Monster.Name);
+	}
+
+	showMessage(size);
 }
 
 CreateHook(MH::Monster::ctor, ConstructMonster, void*, void* this_ptr, unsigned int monster_id, unsigned int variant)

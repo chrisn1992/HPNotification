@@ -2,22 +2,22 @@
     "/*Language(show different language monster name)*/": "us=english,jp=japanese,cn=chinese",
     "Language": "us",
     "DisplayCapture": true,
-    "Capture": "<STYL MOJI_RED_DEFAULT> is ready to be captured</STYL>",
-    "Bigcrown": "<STYL MOJI_RED_DEFAULT> is very big</STYL>",
-    "Bigsilver": "<STYL MOJI_YELLOW_DEFAULT> is a little big</STYL>",
-    "Smallcrown": "<STYL MOJI_RED_DEFAULT> is very small</STYL>",
-    "Normalsize": " is of average size",
+    "Capture": "<STYL MOJI_RED_DEFAULT>Meowster! the monstername is now able to be captured!</STYL>",
+    "Bigcrown": "<STYL MOJI_RED_DEFAULT>monstername size is big crown</STYL>",
+    "Bigsilver": "<STYL MOJI_YELLOW_DEFAULT>monstername size is silver crown</STYL>",
+    "Smallcrown": "<STYL MOJI_RED_DEFAULT>monstername size is small crown</STYL>",
+    "Normalsize": "monstername size is normal",
     "RatioMessages": [
         {
-            "msg": "<STYL MOJI_YELLOW_DEFAULT> signs of moderate injuries</STYL>.",
+            "msg": "<STYL MOJI_YELLOW_DEFAULT>monstername signs of moderate injuries</STYL>.",
             "ratio": 0.50
         },
         {
-            "msg": "<STYL MOJI_ORANGE_DEFAULT> signs of severe injuries</STYL>.",
+            "msg": "<STYL MOJI_ORANGE_DEFAULT>monstername signs of severe injuries</STYL>.",
             "ratio": 0.25
         },
         {
-            "msg": "<STYL MOJI_RED_DEFAULT> is critically injured !</STYL>",
+            "msg": "<STYL MOJI_RED_DEFAULT>monstername is critically injured !</STYL>",
             "ratio": 0.1
         }
     ],
