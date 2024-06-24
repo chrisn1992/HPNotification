@@ -93,11 +93,11 @@ void checkHealth(void* monster) {
 void checkMonsterSize(void* monster) {
 	int monsterId = *offsetPtr<int>(monster, 0x12280);
 	float sizeModifier = *offsetPtr<float>(monster, 0x7730);
-	float sizeMultiplier = *offsetPtr<float>(monster, 0x188);
+	float sizeMultiplier = *offsetPtr<float>(monster, 0x184);
 	if (sizeModifier <= 0 || sizeModifier >= 2) {
 		sizeModifier = 1;
 	}
-	float monsterSizeMultiplier = sizeMultiplier / sizeModifier;
+	float monsterSizeMultiplier = static_cast<float>(std::round(sizeMultiplier / sizeModifier * 100.0f)) / 100.0f;
 
 	LOG(INFO) << "monster id: " << monsterId << ", size: " << monsterSizeMultiplier;
 
