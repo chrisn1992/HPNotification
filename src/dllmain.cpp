@@ -82,6 +82,11 @@ void checkHealth(void *monster) {
   std::string lastMessage;
   while (!monsterQueue.empty() && health / maxHealth < monsterQueue.front().first) {
     lastMessage = monsterQueue.front().second;
+    std::string re = "monstername";
+		while (lastMessage.find(re) != std::string::npos) {
+			size_t pos = lastMessage.find(re);
+			lastMessage.replace(pos, re.length(), monsters[monsterId].Name);
+		}
     monsterQueue.pop();
   }
   if (!lastMessage.empty()) {
@@ -219,6 +224,7 @@ __declspec(dllexport) extern bool Load() {
       if (monsterMessages.erase(this_)) {
         log(INFO, "Monster {:p} removed", this_);
       }
+      monsterChecked.erase(this_);
     }
     return orig(this_);
   });
