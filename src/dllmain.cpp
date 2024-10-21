@@ -29,6 +29,7 @@ static std::string language;
 static std::string omessages[5];
 static bool isInit=false;
 static bool displayCapture = true;
+static bool displayCrown = true;
 
 using namespace loader;
 using namespace plugin;
@@ -60,6 +61,10 @@ void handleMonsterCreated(int id, void *monster) {
 				}
 				monsterMessages[monster].push(monsterMessages[monster].front());
 				monsterMessages[monster].pop();
+
+				if (!isAdd) {
+                    monsterMessages[monster].push({monsters[id].Capture / 100, omessages[0]});
+                }
 			}
 		}
 		isInit = false;
@@ -170,6 +175,7 @@ __declspec(dllexport) extern bool Load() {
 
 	language = ConfigFile["Language"];
 	displayCapture = ConfigFile["DisplayCapture"];
+    displayCrown = ConfigFile["DisplayCrown"];
 	omessages[0] = ConfigFile["Capture"];
 	omessages[1] = ConfigFile["Bigcrown"];
 	omessages[2] = ConfigFile["Bigsilver"];
@@ -237,16 +243,14 @@ __declspec(dllexport) extern bool Load() {
         for (auto [monster, queue] : monsterMessages) {
           checkHealth(monster);
         }
-				if (isInit) {
-					for (auto [monster, isChecked] : monsterChecked) {
-						if (!isChecked) {
-							checkMonsterSize(monster);
-							monsterChecked[monster] = true;
-						}
-						
-					}
-					
+        if (isInit && displayCrown) {
+			for (auto [monster, isChecked] : monsterChecked) {
+				if (!isChecked) {
+					checkMonsterSize(monster);
+					monsterChecked[monster] = true;
 				}
+			}
+		}
       }
     }
   }).detach();

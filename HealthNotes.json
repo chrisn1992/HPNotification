@@ -2,6 +2,7 @@
     "/*Language(show different language monster name)*/": "us=english,jp=japanese,cn=chinese",
     "Language": "us",
     "DisplayCapture": true,
+    "DisplayCrown": true,
     "Capture": "<STYL MOJI_RED_DEFAULT>Meowster! the monstername is now able to be captured!</STYL>",
     "Bigcrown": "<STYL MOJI_RED_DEFAULT>monstername size is big crown</STYL>",
     "Bigsilver": "<STYL MOJI_YELLOW_DEFAULT>monstername size is silver crown</STYL>",
