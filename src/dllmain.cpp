@@ -27,9 +27,11 @@ static std::mutex lock;
 static struct Monster monsters[102];
 static std::string language;
 static std::string omessages[5];
-static bool isInit=false;
+static bool isInit = false;
+static bool displayHealth = true;
 static bool displayCapture = true;
 static bool displayCrown = true;
+static bool onlyGold = false;
 
 using namespace loader;
 using namespace plugin;
@@ -96,11 +98,14 @@ void checkHealth(void *monster) {
   }
   if (!lastMessage.empty()) {
     log(INFO, "Message: {}", lastMessage);
-    showMessage(lastMessage);
+    if (displayHealth) {
+      showMessage(lastMessage);
+    }
   }
 }
 
 void checkMonsterSize(void* monster) {
+    bool show = true;
 	int monsterId = *offsetPtr<int>(monster, 0x12280);
 	float sizeModifier = *offsetPtr<float>(monster, 0x7730);
 	float sizeMultiplier = *offsetPtr<float>(monster, 0x184);
@@ -119,12 +124,18 @@ void checkMonsterSize(void* monster) {
 	}
 	else if (monsterSizeMultiplier >= Monster.Silver) {
 		size = omessages[2];
+        if (onlyGold) {
+            show = false;
+        }
 	}
 	else if (monsterSizeMultiplier <= Monster.Mini) {
 		size = omessages[3];
 	}
 	else {
 		size = omessages[4];
+        if (onlyGold) {
+			show = false;
+        }
 	}
 
 	std::string re = "monstername";
@@ -132,8 +143,9 @@ void checkMonsterSize(void* monster) {
 		size_t pos = size.find(re);
 		size.replace(pos, re.length(), Monster.Name);
 	}
-
-	showMessage(size);
+    if (show) {
+        showMessage(size);
+	}
 }
 
 byte *get_lea_addr(byte *addr) {
@@ -174,8 +186,10 @@ __declspec(dllexport) extern bool Load() {
   file >> ConfigFile;
 
 	language = ConfigFile["Language"];
-	displayCapture = ConfigFile["DisplayCapture"];
+    displayHealth = ConfigFile["DisplayHealth"];
+    displayCapture = ConfigFile["DisplayCapture"];
     displayCrown = ConfigFile["DisplayCrown"];
+    onlyGold = ConfigFile["OnlyDisplayGoldCrown"];
 	omessages[0] = ConfigFile["Capture"];
 	omessages[1] = ConfigFile["Bigcrown"];
 	omessages[2] = ConfigFile["Bigsilver"];
