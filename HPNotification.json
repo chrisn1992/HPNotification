@@ -1,0 +1,880 @@
+{
+  "Language": "us",
+  "EnableLogging": false,
+  "NotificationType": "interval",
+  "TypeValue": 2000,
+  "DisplayCrown": true,
+  "OnlyDisplayGoldCrown": false,
+  "Bigcrown": "Size notification:\r\n<STYL MOJI_RED_DEFAULT>monstername</STYL> is <STYL MOJI_YELLOW_DEFAULT>Gold crown</STYL>",
+  "Bigsilver": "Size notification:\r\n<STYL MOJI_RED_DEFAULT>monstername</STYL> is <STYL MOJI_WHITE_SELECTED2>Silver crown</STYL>",
+  "Smallcrown": "Size notification:\r\n<STYL MOJI_RED_DEFAULT>monstername</STYL> is <STYL MOJI_WHITE_DEFAULT2>Miniature</STYL>",
+  "Normalsize": "Size notification:\r\n<STYL MOJI_RED_DEFAULT>monstername</STYL> is normal",
+  "DisplayCapture": true,
+  "Capture": "The <STYL MOJI_RED_DEFAULT>monstername</STYL> is now able to be captured!",
+  "DisplayHealth": true,
+  "HPMessage": "<STYL MOJI_RED_DEFAULT>monstername</STYL> has <STYL MOJI_GREEN_DEFAULT>hpratio</STYL>%HP left.",
+  "RatioMessages": [
+    {
+      "ratio": 0.9,
+      "msg": ""
+    },
+    {
+      "ratio": 0.85,
+      "msg": ""
+    },
+    {
+      "ratio": 0.8,
+      "msg": ""
+    },
+    {
+      "ratio": 0.75,
+      "msg": ""
+    },
+    {
+      "ratio": 0.7,
+      "msg": ""
+    },
+    {
+      "ratio": 0.65,
+      "msg": ""
+    },
+    {
+      "ratio": 0.6,
+      "msg": ""
+    },
+    {
+      "ratio": 0.55,
+      "msg": ""
+    },
+    {
+      "ratio": 0.5,
+      "msg": ""
+    },
+    {
+      "ratio": 0.45,
+      "msg": ""
+    },
+    {
+      "ratio": 0.4,
+      "msg": ""
+    },
+    {
+      "ratio": 0.35,
+      "msg": ""
+    },
+    {
+      "ratio": 0.3,
+      "msg": ""
+    },
+    {
+      "ratio": 0.25,
+      "msg": ""
+    },
+    {
+      "ratio": 0.2,
+      "msg": ""
+    },
+    {
+      "ratio": 0.15,
+      "msg": ""
+    },
+    {
+      "ratio": 0.1,
+      "msg": ""
+    }
+  ],
+  "Monsters": [
+    {
+      "Id": 0,
+      "CNName": "蛮颚龙",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.1,
+      "Gold": 1.2,
+      "Name": "",
+      "USName": "Anjanath",
+      "JPName": "アンジャナフ"
+    },
+    {
+      "Id": 1,
+      "CNName": "火龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Rathalos",
+      "JPName": "リオレウス"
+    },
+    {
+      "Id": 4,
+      "CNName": "熔山龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Zorah Magdaros",
+      "JPName": "ゾラ・マグダラオス"
+    },
+    {
+      "Id": 7,
+      "CNName": "大贼龙",
+      "Capture": 30,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Great Jagras",
+      "JPName": "ドスジャグラス"
+    },
+    {
+      "Id": 9,
+      "CNName": "雌火龙",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Rathian",
+      "JPName": "リオレイア"
+    },
+    {
+      "Id": 10,
+      "CNName": "樱火龙",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Pink Rathian",
+      "JPName": "リオレイア亜種"
+    },
+    {
+      "Id": 11,
+      "CNName": "苍火龙",
+      "Capture": 15,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Azure Rathalos",
+      "JPName": "リオレウス亜種"
+    },
+    {
+      "Id": 12,
+      "CNName": "角龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Diablos",
+      "JPName": "ディアブロス"
+    },
+    {
+      "Id": 13,
+      "CNName": "黑角龙",
+      "Capture": 15,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Black Diablos",
+      "JPName": "ディアブロス亜種"
+    },
+    {
+      "Id": 14,
+      "CNName": "麒麟",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Kirin",
+      "JPName": "キリン"
+    },
+    {
+      "Id": 15,
+      "CNName": "贝希摩斯",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Behemoth",
+      "JPName": "ベヒーモス"
+    },
+    {
+      "Id": 16,
+      "CNName": "钢龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Kushala Daora",
+      "JPName": "クシャルダオラ"
+    },
+    {
+      "Id": 17,
+      "CNName": "炎妃龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Lunastra",
+      "JPName": "ナナ・テスカトリ"
+    },
+    {
+      "Id": 18,
+      "CNName": "炎王龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Teostra",
+      "JPName": "テオ・テスカトル"
+    },
+    {
+      "Id": 19,
+      "CNName": "熔岩龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Lavasioth",
+      "JPName": "ヴォルガノス"
+    },
+    {
+      "Id": 20,
+      "CNName": "恐暴龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.1,
+      "Gold": 1.2,
+      "Name": "",
+      "USName": "Deviljho",
+      "JPName": "イビルジョー"
+    },
+    {
+      "Id": 21,
+      "CNName": "土砂龙",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Barroth",
+      "JPName": "ボルボロス"
+    },
+    {
+      "Id": 22,
+      "CNName": "爆锤龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.1,
+      "Gold": 1.2,
+      "Name": "",
+      "USName": "Uragaan",
+      "JPName": "ウラガンキン"
+    },
+    {
+      "Id": 23,
+      "CNName": "鹿首精",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Leshen",
+      "JPName": "レーシェン"
+    },
+    {
+      "Id": 24,
+      "CNName": "毒妖鸟",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.1,
+      "Gold": 1.2,
+      "Name": "",
+      "USName": "Pukei-Pukei",
+      "JPName": "プケプケ"
+    },
+    {
+      "Id": 25,
+      "CNName": "灭尽龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Nergigante",
+      "JPName": "ネルギガンテ"
+    },
+    {
+      "Id": 26,
+      "CNName": "冥灯龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Xeno'jiiva",
+      "JPName": "ゼノ・ジーヴァ"
+    },
+    {
+      "Id": 27,
+      "CNName": "搔鸟",
+      "Capture": 30,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Kulu-Ya-Ku",
+      "JPName": "クルルヤック"
+    },
+    {
+      "Id": 28,
+      "CNName": "眩鸟",
+      "Capture": 30,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Tzitzi-Ya-Ku",
+      "JPName": "ツィツィヤック"
+    },
+    {
+      "Id": 29,
+      "CNName": "泥鱼龙",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Jyuratodus",
+      "JPName": "ジュラトドス"
+    },
+    {
+      "Id": 30,
+      "CNName": "飞雷龙",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.1,
+      "Gold": 1.2,
+      "Name": "",
+      "USName": "Tobi-Kadachi",
+      "JPName": "トビカガチ"
+    },
+    {
+      "Id": 31,
+      "CNName": "浮空龙",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Paolumu",
+      "JPName": "パオウルムー"
+    },
+    {
+      "Id": 32,
+      "CNName": "风漂龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Legiana",
+      "JPName": "レイギエナ"
+    },
+    {
+      "Id": 33,
+      "CNName": "大痹贼龙",
+      "Capture": 30,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Great Girros",
+      "JPName": "ドスギルオス"
+    },
+    {
+      "Id": 34,
+      "CNName": "惨爪龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Odogaron",
+      "JPName": "オドガロン"
+    },
+    {
+      "Id": 35,
+      "CNName": "骨锤龙",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.1,
+      "Gold": 1.2,
+      "Name": "",
+      "USName": "Radobaan",
+      "JPName": "ラドバルキン"
+    },
+    {
+      "Id": 36,
+      "CNName": "尸套龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Vaal Hazak",
+      "JPName": "ヴァルハザク"
+    },
+    {
+      "Id": 37,
+      "CNName": "岩贼龙",
+      "Capture": 30,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Dodogama",
+      "JPName": "ドドガマル"
+    },
+    {
+      "Id": 38,
+      "CNName": "绚辉龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Kulve Taroth",
+      "JPName": "マム・タロト"
+    },
+    {
+      "Id": 39,
+      "CNName": "爆鳞龙",
+      "Capture": 30,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Bazelgeuse",
+      "JPName": "バゼルギウス"
+    },
+    {
+      "Id": 51,
+      "CNName": "古代鹿首精",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Ancient Leshen",
+      "JPName": "エンシェント・レーシェン"
+    },
+    {
+      "Id": 61,
+      "CNName": "轰龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Tigrex",
+      "JPName": "ティガレックス"
+    },
+    {
+      "Id": 62,
+      "CNName": "迅龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Nargacuga",
+      "JPName": "ナルガクルガ"
+    },
+    {
+      "Id": 63,
+      "CNName": "冰牙龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Barioth",
+      "JPName": "ベリオロス"
+    },
+    {
+      "Id": 64,
+      "CNName": "惶怒恐暴龙",
+      "Capture": 10,
+      "Mini": 0.99,
+      "Silver": 1.14,
+      "Gold": 1.2,
+      "Name": "",
+      "USName": "Savage Deviljho",
+      "JPName": "怒り喰らうイビルジョー"
+    },
+    {
+      "Id": 65,
+      "CNName": "碎龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Brachydios",
+      "JPName": "ブラキディオス"
+    },
+    {
+      "Id": 66,
+      "CNName": "斩龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.1,
+      "Gold": 1.2,
+      "Name": "",
+      "USName": "Glavenus",
+      "JPName": "ディノバルド"
+    },
+    {
+      "Id": 67,
+      "CNName": "硫斩龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.1,
+      "Gold": 1.2,
+      "Name": "",
+      "USName": "Acidic Glavenus",
+      "JPName": "ディノバルド亜種"
+    },
+    {
+      "Id": 68,
+      "CNName": "雷颚龙",
+      "Capture": 15,
+      "Mini": 0.9,
+      "Silver": 1.1,
+      "Gold": 1.2,
+      "Name": "",
+      "USName": "Fulgur Anjanath",
+      "JPName": "アンジャナフ亜種"
+    },
+    {
+      "Id": 69,
+      "CNName": "水妖鸟",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.1,
+      "Gold": 1.2,
+      "Name": "",
+      "USName": "Coral Pukei-Pukei",
+      "JPName": "プケプケ亜種"
+    },
+    {
+      "Id": 70,
+      "CNName": "歼世灭尽龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Ruiner Nergigante",
+      "JPName": "悉くを殲ぼすネルギガンテ"
+    },
+    {
+      "Id": 71,
+      "CNName": "痹毒龙",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.1,
+      "Gold": 1.2,
+      "Name": "",
+      "USName": "Viper Tobi-Kadachi",
+      "JPName": "トビカガチ亜種"
+    },
+    {
+      "Id": 72,
+      "CNName": "浮眠龙",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Nightshade Paolumu",
+      "JPName": "パオウルムー亜種"
+    },
+    {
+      "Id": 73,
+      "CNName": "霜翼风漂龙",
+      "Capture": 15,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Shrieking Legiana",
+      "JPName": "レイギエナ亜種"
+    },
+    {
+      "Id": 74,
+      "CNName": "凶爪龙",
+      "Capture": 15,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Ebony Odogaron",
+      "JPName": "オドガロン亜種"
+    },
+    {
+      "Id": 75,
+      "CNName": "雾瘴尸套龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Blackveil Vaal Hazak",
+      "JPName": "死を纏うヴァルハザク"
+    },
+    {
+      "Id": 76,
+      "CNName": "红莲爆鳞龙",
+      "Capture": 10,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Seething Bazelgeuse",
+      "JPName": "紅蓮滾るバゼルギウス"
+    },
+    {
+      "Id": 77,
+      "CNName": "冰鱼龙",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Beotodus",
+      "JPName": "ブラントドス"
+    },
+    {
+      "Id": 78,
+      "CNName": "猛牛龙",
+      "Capture": 25,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Banbaro",
+      "JPName": "バフバロ"
+    },
+    {
+      "Id": 79,
+      "CNName": "冰呪龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Velkhana",
+      "JPName": "イヴェルカーナ"
+    },
+    {
+      "Id": 80,
+      "CNName": "溟波龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Namielle",
+      "JPName": "ネロミェール"
+    },
+    {
+      "Id": 81,
+      "CNName": "天地煌啼龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Shara Ishvalda",
+      "JPName": "アン・イシュワルダ"
+    },
+    {
+      "Id": 87,
+      "CNName": "煌黑龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Alatreon",
+      "JPName": "アルバトリオン"
+    },
+    {
+      "Id": 88,
+      "CNName": "金火龙",
+      "Capture": 10,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Gold Rathian",
+      "JPName": "リオレイア希少種"
+    },
+    {
+      "Id": 89,
+      "CNName": "银火龙",
+      "Capture": 10,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Silver Rathalos",
+      "JPName": "リオレウス希少種"
+    },
+    {
+      "Id": 90,
+      "CNName": "黑狼鸟",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Yian Garuga",
+      "JPName": "イャンガルルガ"
+    },
+    {
+      "Id": 91,
+      "CNName": "金狮子",
+      "Capture": 15,
+      "Mini": 0.9,
+      "Silver": 1.11,
+      "Gold": 1.18,
+      "Name": "",
+      "USName": "Rajang",
+      "JPName": "ラージャン"
+    },
+    {
+      "Id": 92,
+      "CNName": "激昂金狮子",
+      "Capture": 10,
+      "Mini": 0.9,
+      "Silver": 1.11,
+      "Gold": 1.18,
+      "Name": "",
+      "USName": "Furious Rajang",
+      "JPName": "激昂したラージャン"
+    },
+    {
+      "Id": 93,
+      "CNName": "黑轰龙",
+      "Capture": 15,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Brute Tigrex",
+      "JPName": "ティガレックス亜種"
+    },
+    {
+      "Id": 94,
+      "CNName": "雷狼龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Zinogre",
+      "JPName": "ジンオウガ"
+    },
+    {
+      "Id": 95,
+      "CNName": "狱狼龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Stygian Zinogre",
+      "JPName": "ジンオウガ亜種"
+    },
+    {
+      "Id": 96,
+      "CNName": "猛爆碎龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Raging Brachydios",
+      "JPName": "猛り爆ぜるブラキディオス"
+    },
+    {
+      "Id": 97,
+      "CNName": "冥赤龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Safi'jiiva",
+      "JPName": "ムフェト・ジーヴァ"
+    },
+    {
+      "Id": 98,
+      "CNName": "木人桩",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Training Dummy",
+      "JPName": "荷車"
+    },
+    {
+      "Id": 99,
+      "CNName": "战痕黑狼鸟",
+      "Capture": 15,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Scarred Yian Garuga",
+      "JPName": "傷ついたイャンガルルガ"
+    },
+    {
+      "Id": 100,
+      "CNName": "霜刃冰牙龙",
+      "Capture": 20,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Frostfang Barioth",
+      "JPName": "氷刃佩くベリオロス"
+    },
+    {
+      "Id": 101,
+      "CNName": "黑龙",
+      "Capture": 0,
+      "Mini": 0.9,
+      "Silver": 1.15,
+      "Gold": 1.23,
+      "Name": "",
+      "USName": "Fatalis",
+      "JPName": "ミラボレアス"
+    }
+  ]
+}

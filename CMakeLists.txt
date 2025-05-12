@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 3.29)
 
 project(
-  HealthNotes
-  VERSION 1.0
+  HPNotification
+  VERSION 1.1
   LANGUAGES CXX
 )
-
 set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreaded)
 
 add_library(minhook STATIC IMPORTED)
@@ -16,7 +15,8 @@ add_library(loader STATIC IMPORTED)
 target_include_directories(loader INTERFACE deps/loader)
 set_property(TARGET loader PROPERTY IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/deps/loader/loader.lib)
 
-add_library(HealthNotes SHARED src/dllmain.cpp)
-target_link_libraries(HealthNotes PRIVATE minhook loader)
-target_include_directories(HealthNotes PRIVATE deps/json deps/loader deps/minhook)
-target_compile_features(HealthNotes PRIVATE cxx_std_20)
+add_library(HPNotification SHARED src/dllmain.cpp "src/supplemental.cpp")
+
+target_link_libraries(HPNotification PRIVATE minhook loader)
+target_include_directories(HPNotification PRIVATE deps/json deps/loader deps/minhook)
+target_compile_features(HPNotification PRIVATE cxx_std_20)

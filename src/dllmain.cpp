@@ -4,148 +4,392 @@
 #include "loader.h"
 #include "plugin-utils.h"
 #include "signatures.h"
+#include "supplemental.cpp"
+#include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <mutex>
 #include <queue>
 #include <windows.h>
-#include <filesystem>
 
-struct Monster{
-	int Id;
-	std::string Name;
-	float Capture;
-	float Mini;
-	float Silver;
-	float Gold;
-};
-
-
-static std::queue<std::pair<float, std::string>> messages;
-static std::map<void *, std::queue<std::pair<float, std::string>>> monsterMessages;
-static std::map<void*, bool> monsterChecked;
-static std::mutex lock;
-static struct Monster monsters[102];
-static std::string language;
-static std::string omessages[5];
-static bool isInit = false;
-static bool displayHealth = true;
-static bool displayCapture = true;
-static bool displayCrown = true;
-static bool onlyGold = false;
+std::string_view plugin::module_name = "HPNotification";
 
 using namespace loader;
 using namespace plugin;
 
-std::string_view plugin::module_name = "HealthNotes";
-
+using json = nlohmann::json;
+static struct HPNNS::Config *Configs = new HPNNS::Config();
+static std::map<void *, std::vector<HPNNS::RatioMessage>> monsterMessages;
+static std::map<void *, HPNNS::Monster> monsters;
+static std::map<void *, std::pair<bool, bool>> monsterChecked;
+static int intervalBase, interval, hp, percent = 0;
+static std::mutex thread0;
+static std::mutex thread1;
+static std::mutex thread2;
 const int UENEMY_LEA_VFT_OFFSET = 0x43;
 const int CHAT_INSTANCE_OFFSET = 0x4d;
-
 static void *chat_instance = nullptr;
 static void (*show_message)(void *, const char *, float, unsigned int, char) = nullptr;
-
+static bool (*CallBack)(void *monster) = nullptr;
 void showMessage(std::string message) { show_message(*(void **)chat_instance, message.c_str(), -1, -1, 0); }
 
-void handleMonsterCreated(int id, void *monster) {
-	char* monsterPath = offsetPtr<char>(monster, 0x7741);
-	if (monsterPath[2] == '0' || monsterPath[2] == '1') {
-		LOG(INFO) << "Setting up health messages for " << monsterPath;
-		std::unique_lock l(lock);
-		monsterMessages[monster] = messages;
-		if (displayCapture && monsters[id].Capture != 0) {
-			bool isAdd = false;
-			int c = monsterMessages[monster].size();
-			for (int i = 0; i < c; i++) {
-				LOG(INFO) << monsterMessages[monster].front().first;
-				if (!isAdd && monsters[id].Capture / 100 >= monsterMessages[monster].front().first) {
-					monsterMessages[monster].push({ monsters[id].Capture / 100, omessages[0] });
-					isAdd = true;
-				}
-				monsterMessages[monster].push(monsterMessages[monster].front());
-				monsterMessages[monster].pop();
-
-				if (!isAdd) {
-                    monsterMessages[monster].push({monsters[id].Capture / 100, omessages[0]});
-                }
-			}
-		}
-		isInit = false;
-		monsterChecked[monster] = false;
-	}
+void showMessage(std::string message, char param3) {
+  show_message(*(void **)chat_instance, message.c_str(), -1, -1, param3);
 }
 
-void checkHealth(void *monster) {
-	int monsterId = *offsetPtr<int>(monster, 0x12280);
-  void *healthMgr = *offsetPtr<void *>(monster, 0x7670);
-  float health = *offsetPtr<float>(healthMgr, 0x64);
-  float maxHealth = *offsetPtr<float>(healthMgr, 0x60);
-
-	if (!(health == 100 && maxHealth == 100)) {
-		isInit = true;
-	}
-
-  char *monsterPath = offsetPtr<char>(monster, 0x7741);
-  auto &monsterQueue = monsterMessages[monster];
-  std::string lastMessage;
-  while (!monsterQueue.empty() && health / maxHealth < monsterQueue.front().first) {
-    lastMessage = monsterQueue.front().second;
-    std::string re = "monstername";
-		while (lastMessage.find(re) != std::string::npos) {
-			size_t pos = lastMessage.find(re);
-			lastMessage.replace(pos, re.length(), monsters[monsterId].Name);
-		}
-    monsterQueue.pop();
+void ValidateAndBuildMessageString(std::string &hpMessage, std::vector<HPNNS::RatioMessage> &monsterQueue,
+                                   std::string &monsterNameReplacer, HPNNS::Monster *Monster,
+                                   std::string &hpRatioReplacer, float &hpRatio, std::string &captureMessage) {
+  if ((*Configs).DisplayHealth) {
+    hpMessage = monsterQueue.front().Msg.length() ? monsterQueue.front().Msg : (*Configs).HpMessage;
+    // hpMessage = std::format("{}: {}", std::ctime(&currentTime), hpMessage);
+    while (hpMessage.find(monsterNameReplacer) != std::string::npos) {
+      size_t pos = hpMessage.find(monsterNameReplacer);
+      hpMessage.replace(pos, monsterNameReplacer.length(), (Monster)->Name);
+    }
+    while (hpMessage.find(hpRatioReplacer) != std::string::npos) {
+      size_t pos = hpMessage.find(hpRatioReplacer);
+      hpMessage.replace(pos, hpRatioReplacer.length(), std::format("{:.2f}", hpRatio * 100.0f));
+    }
   }
-  if (!lastMessage.empty()) {
-    log(INFO, "Message: {}", lastMessage);
-    if (displayHealth) {
-      showMessage(lastMessage);
+  if ((*Configs).DisplayCapture && (Monster)->Capture != 0 && !(Monster)->captureMessageShown) {
+    if (hpRatio < (Monster)->Capture / 100.0f) {
+      captureMessage = (*Configs).Capture;
+      while (captureMessage.find(monsterNameReplacer) != std::string::npos) {
+        size_t pos = captureMessage.find(monsterNameReplacer);
+        captureMessage.replace(pos, monsterNameReplacer.length(), (Monster)->Name);
+      }
+      (Monster)->captureMessageShown = true;
     }
   }
 }
 
-void checkMonsterSize(void* monster) {
+void DisplayFinalMessage(std::string &captureMessage, std::string &hpMessage, HPNNS::Monster *Monster, float &health,
+                         float &maxHealth, float &newValue) {
+  if (!captureMessage.empty()) {
+    showMessage(captureMessage, 2);
+  }
+  if (!hpMessage.empty()) {
+    bool canBeCapture = (Monster)->captureMessageShown;
+    if (canBeCapture) {
+      hpMessage = std::format("{} Monster can be captured now.", hpMessage);
+    }
+    hpMessage = std::format("{}\r\nHP: <STYL MOJI_GREEN_DEFAULT>{:.0f}</STYL>/<STYL MOJI_GREEN_DEFAULT>{:.0f}</STYL>",
+                            hpMessage, health, maxHealth);
+
+    showMessage(hpMessage, 2);
+    (Monster)->prevValue = newValue;
+  }
+}
+
+int BuildMonsterInformation(void *&monster, HPNNS::Monster *Monster, float &health, float &maxHealth,
+                            std::vector<HPNNS::RatioMessage> &monsterQueue, float &hpRatio) {
+  bool validMonster = monsterMessages.contains(monster);
+  if (!validMonster)
+    return -1;
+  void *healthMgr = *offsetPtr<void *>(monster, 0x7670);
+  health = *offsetPtr<float>(healthMgr, 0x64);
+  maxHealth = *offsetPtr<float>(healthMgr, 0x60);
+  monsterQueue = monsterMessages[monster];
+  if (Monster->isPending) {
+    return 0;
+  }
+
+  // if (health == 100 && maxHealth == 100) {
+  //   Monster->MaxHealth = -1;
+  //   return 0;
+  // }
+  hpRatio = (health / maxHealth);
+  if (hpRatio <= 0.05f) {
+
+    return -1;
+  }
+  std::string hpText = std::format("{} : {:.2f}/{:.2f} ({:.2f}%)", Monster->Name, health, maxHealth, hpRatio);
+  return 1;
+}
+
+void ProcessDisplayMessage(std::string &hpMessage, std::vector<HPNNS::RatioMessage> &monsterQueue,
+                           std::string &monsterNameReplacer, HPNNS::Monster *Monster, std::string &hpRatioReplacer,
+                           float &hpRatio, std::string &captureMessage, float &health, float &maxHealth,
+                           float &newValue) {
+
+  ValidateAndBuildMessageString(hpMessage, monsterQueue, monsterNameReplacer, &*Monster, hpRatioReplacer, hpRatio,
+                                captureMessage);
+
+  DisplayFinalMessage(captureMessage, hpMessage, &*Monster, health, maxHealth, newValue);
+}
+
+void RevalidateMaxHP(HPNNS::Monster *Monster, float maxHealth, void *&monster) {
+  int intMaxHealth = round(maxHealth);
+  if (Monster->MaxHealth != intMaxHealth) {
+    monsterMessages[monster] = Configs->RatioMessages;
+    Monster->MaxHealth = intMaxHealth;
+    monsterChecked[monster].first = true;
+    (Monster)->prevValue = -1;
+  }
+}
+
+ bool checkHealthQueue(void *monster) {
+  HPNNS::Monster &Monster = monsters[monster];
+  std::vector<HPNNS::RatioMessage> &monsterQueue(Configs->RatioMessages);
+
+  float maxHealth, health, hpRatio;
+  std::string hpMessage;
+  std::string captureMessage;
+  std::string monsterNameReplacer = "monstername";
+  std::string hpRatioReplacer = "hpratio";
+
+  int result = BuildMonsterInformation(monster, &Monster, health, maxHealth, monsterQueue, hpRatio);
+  if (result == -1)
+    return false;
+
+  if (monsterQueue.empty()) {
+    return false;
+  }
+
+  if (!(health == 100 && maxHealth == 100)) {
+    RevalidateMaxHP(&Monster, maxHealth, monster);
+  }
+
+  while (!monsterQueue.empty() && result && hpRatio != 1.0f && hpRatio < monsterQueue.front().Ratio) {
+    result = monsterMessages.contains(monster);
+    if (!result) {
+      return false;
+    }
+    (Monster).isPending = true;
+    ValidateAndBuildMessageString(hpMessage, monsterQueue, monsterNameReplacer, &Monster, hpRatioReplacer, hpRatio,
+                                  captureMessage);
+    monsterQueue.erase(monsterQueue.begin());
+    (Monster).isPending = false;
+  }
+  DisplayFinalMessage(captureMessage, hpMessage, &Monster, health, maxHealth, hpRatio);
+
+  return true;
+}
+
+bool checkHealthInterval(void *monster) {
+  HPNNS::Monster &Monster = monsters[monster];
+  std::vector<HPNNS::RatioMessage> &monsterQueue(Configs->RatioMessages);
+
+  float maxHealth, health, hpRatio;
+  std::string hpMessage;
+  std::string captureMessage;
+  std::string monsterNameReplacer = "monstername";
+  std::string hpRatioReplacer = "hpratio";
+
+  int result = BuildMonsterInformation(monster, &Monster, health, maxHealth, monsterQueue, hpRatio);
+  if (result == -1)
+    return false;
+
+  if (!(health == 100 && maxHealth == 100)) {
+    RevalidateMaxHP(&Monster, maxHealth, monster);
+  }
+
+  (Monster).prevValue = (Monster).prevValue == -1 ? 1 : (Monster).prevValue;
+
+  if (result && hpRatio < (Monster).prevValue) {
+    ProcessDisplayMessage(hpMessage, monsterQueue, monsterNameReplacer, &Monster, hpRatioReplacer, hpRatio,
+                          captureMessage, health, maxHealth, hpRatio);
+  }
+  (Monster).isPending = false;
+  // monsters[monster] = Monster;
+
+  return true;
+}
+
+ bool checkHealthHP(void *monster) {
+  HPNNS::Monster &Monster = monsters[monster];
+  std::vector<HPNNS::RatioMessage> &monsterQueue(Configs->RatioMessages);
+
+  float maxHealth, health, hpRatio;
+  std::string hpMessage;
+  std::string captureMessage;
+  std::string monsterNameReplacer = "monstername";
+  std::string hpRatioReplacer = "hpratio";
+
+  int result = BuildMonsterInformation(monster, &Monster, health, maxHealth, monsterQueue, hpRatio);
+  if (result == -1)
+    return false;
+
+  if (!(health == 100 && maxHealth == 100)) {
+    RevalidateMaxHP(&Monster, maxHealth, monster);
+  }
+  (Monster).prevValue = (Monster).prevValue == -1 ? health : (Monster).prevValue;
+
+  if (health < (Monster).prevValue && ((Monster).prevValue - health) > hp) {
+    ProcessDisplayMessage(hpMessage, monsterQueue, monsterNameReplacer, &Monster, hpRatioReplacer, hpRatio,
+                          captureMessage, health, maxHealth, health);
+  }
+
+  return true;
+}
+
+ bool checkHealthPerc(void *monster) {
+  HPNNS::Monster &Monster = monsters[monster];
+  std::vector<HPNNS::RatioMessage> &monsterQueue(Configs->RatioMessages);
+
+  float maxHealth, health, hpRatio;
+  std::string hpMessage;
+  std::string captureMessage;
+  std::string monsterNameReplacer = "monstername";
+  std::string hpRatioReplacer = "hpratio";
+
+  int result = BuildMonsterInformation(monster, &Monster, health, maxHealth, monsterQueue, hpRatio);
+  if (result == -1)
+    return false;
+
+  if (!(health == 100 && maxHealth == 100)) {
+    RevalidateMaxHP(&Monster, maxHealth, monster);
+  }
+  (Monster).prevValue = (Monster).prevValue == -1 ? 1 : (Monster).prevValue;
+
+  if (hpRatio <= (Monster).prevValue && ((Monster).prevValue - hpRatio) > percent) {
+    ProcessDisplayMessage(hpMessage, monsterQueue, monsterNameReplacer, &Monster, hpRatioReplacer, hpRatio,
+                          captureMessage, health, maxHealth, hpRatio);
+  }
+
+  return true;
+}
+
+void checkMonsterSize(void *monster) {
+  if (monsterChecked.contains(monster)) {
+
     bool show = true;
-	int monsterId = *offsetPtr<int>(monster, 0x12280);
-	float sizeModifier = *offsetPtr<float>(monster, 0x7730);
-	float sizeMultiplier = *offsetPtr<float>(monster, 0x184);
-	if (sizeModifier <= 0 || sizeModifier >= 2) {
-		sizeModifier = 1;
-	}
-	float monsterSizeMultiplier = static_cast<float>(std::round(sizeMultiplier / sizeModifier * 100.0f)) / 100.0f;
+    int monsterId = *offsetPtr<int>(monster, 0x12280);
+    float sizeModifier = *offsetPtr<float>(monster, 0x7730);
+    float sizeMultiplier = *offsetPtr<float>(monster, 0x184);
+    if (sizeModifier <= 0 || sizeModifier >= 2) {
+      sizeModifier = 1;
+    }
+    float monsterSizeMultiplier = static_cast<float>(std::round(sizeMultiplier / sizeModifier * 100.0f)) / 100.0f;
+    HPNNS::Monster Monster = monsters[monster];
 
-	LOG(INFO) << "monster id: " << monsterId << ", size: " << monsterSizeMultiplier;
+    std::string size;
+    if (monsterSizeMultiplier >= Monster.Gold) {
+      size = (*Configs).Bigcrown;
+    } else if (monsterSizeMultiplier >= Monster.Silver) {
+      size = (*Configs).Bigsilver;
+      if ((*Configs).OnlyDisplayGoldCrown) {
+        show = false;
+      }
+    } else if (monsterSizeMultiplier <= Monster.Mini) {
+      size = (*Configs).Smallcrown;
+    } else {
+      size = (*Configs).Normalsize;
+      if ((*Configs).OnlyDisplayGoldCrown) {
+        show = false;
+      }
+    }
 
-	struct Monster Monster = monsters[monsterId];
-
-	std::string size;
-	if (monsterSizeMultiplier >= Monster.Gold) {
-		size = omessages[1];
-	}
-	else if (monsterSizeMultiplier >= Monster.Silver) {
-		size = omessages[2];
-        if (onlyGold) {
-            show = false;
-        }
-	}
-	else if (monsterSizeMultiplier <= Monster.Mini) {
-		size = omessages[3];
-	}
-	else {
-		size = omessages[4];
-        if (onlyGold) {
-			show = false;
-        }
-	}
-
-	std::string re = "monstername";
-	while (size.find(re) != std::string::npos) {
-		size_t pos = size.find(re);
-		size.replace(pos, re.length(), Monster.Name);
-	}
+    std::string re = "monstername";
+    while (size.find(re) != std::string::npos) {
+      size_t pos = size.find(re);
+      std::string capu;
+      if (Monster.Capture != 0) {
+        capu = "Capturable";
+        size.replace(pos, re.length(),
+                     format("{}<STYL MOJI_BLUE_DEFAULT>({} at {}%)</STYL>", Monster.Name, capu, Monster.Capture));
+      } else {
+        capu = "Uncapturable";
+        size.replace(pos, re.length(), format("{}<STYL MOJI_BLACK_DEFAULT>({})</STYL>", Monster.Name, capu));
+      }
+    }
     if (show) {
-        showMessage(size);
-	}
+      showMessage(size, 2);
+    }
+  }
+}
+
+bool ConfigLoading() {
+  try {
+    std::string nativePCPath = "nativePC";
+    // check if using ICE mod
+    if (std::filesystem::exists("ICE")) {
+      if (std::filesystem::is_directory("ICE")) {
+        nativePCPath = "ICE/ntPC";
+      }
+    }
+    std::ifstream file2(nativePCPath.append("/plugins/HPNotification.json"));
+    if (file2.fail()) {
+      return true;
+    }
+    nlohmann::json ConfigFile = nlohmann::json::object();
+    file2 >> ConfigFile;
+    (*Configs) = ConfigFile.template get<HPNNS::Config>();
+
+    if ((*Configs).NotificationType._Equal("interval")) {
+      intervalBase = (*Configs).TypeValue;
+      interval = intervalBase;
+      CallBack = &checkHealthInterval;
+    }
+    if ((*Configs).NotificationType._Equal("HP")) {
+      hp = (*Configs).TypeValue;
+      interval = 1000;
+      CallBack = &checkHealthHP;
+    }
+    if ((*Configs).NotificationType._Equal("percentage")) {
+      percent = (*Configs).TypeValue;
+      interval = 1000;
+      CallBack = &checkHealthPerc;
+    }
+    if ((*Configs).NotificationType._Equal("queue")) {
+      interval = round((*Configs).TypeValue * (*Configs).RatioMessages.size() / 100);
+      CallBack = &checkHealthQueue;
+    }
+    if (interval < 1000) {
+      interval = 1000;
+    }
+    for (HPNNS::Monster &monst : (*Configs).Monsters) {
+      std::string language = (*Configs).Language;
+      monst.Name = monst.USName;
+      if (language == "cn") {
+        monst.Name = monst.CNName;
+      }
+      if (language == "jp") {
+        monst.Name = monst.JpName;
+      }
+      monst.captureMessageShown = false;
+      monst.isPending = false;
+      monst.prevValue = -1;
+    }
+    return true;
+  } catch (int errCode) {
+
+    return true;
+  }
+}
+
+std::mutex slthreadLock;
+void SingleThreadFunction(void *const monster) {
+  bool validMonster = true;
+
+  while (validMonster) {
+    int validInter = round((*Configs).TypeValue * (*Configs).RatioMessages.size() / 100);
+    validInter = validInter < 2000 ? 2000 : validInter;
+    {
+      std::unique_lock ul(slthreadLock);
+      if (!monsters.contains(monster) && monsterChecked.contains(monster)) {
+        int monsterId = *offsetPtr<int>(monster, 0x12280);
+        auto list = Configs->Monsters;
+        const auto it = std::find_if(list.begin(), list.end(),
+                                     [monsterId](const HPNNS::Monster &mon) { return mon.Id == monsterId; });
+        auto mon = *it;
+        monsters[monster] = mon;
+      }
+      
+      CallBack(monster);
+      auto &checked = monsterChecked[monster];
+      if (checked.first && !checked.second) {
+        checkMonsterSize(monster);
+        checked.second = true;
+      }
+      validMonster = monsterMessages.contains(monster);
+      if (!validMonster) {
+        return;
+      }
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(validInter));
+  }
 }
 
 byte *get_lea_addr(byte *addr) {
@@ -154,71 +398,21 @@ byte *get_lea_addr(byte *addr) {
   return base_addr + offset;
 }
 
-__declspec(dllexport) extern bool Load() {
-	std::string nativePCPath = "nativePC";
-	// check if using ICE mod
-	if (std::filesystem::exists("ICE")) {
-		if (std::filesystem::is_directory("ICE")) {
-			nativePCPath = "ICE/ntPC";
-		}
-
-		// check only first 3 digit for ICE
-		/*if (std::string(GameVersion).rfind("314", 0) != 0) {
-			LOG(ERR) << "Health Notes : Wrong ICE version";
-			return false;
-		}*/
-	}
-	/*else {
-		if (std::string(GameVersion) != "421652") {
-			LOG(ERR) << "Health Notes : Wrong version";
-			return false;
-		}
-	}*/
-
-	std::ifstream file(nativePCPath.append("/plugins/HealthNotes.json"));
-  if (file.fail()) {
-    log(ERR, "Error: config file not found");
-    return false;
+static std::mutex HookListenerLok;
+void handleMonsterCreated(int id, void *monster) {
+  char *monsterPath = offsetPtr<char>(monster, 0x7741);
+  if (monsterPath[2] == '0' || monsterPath[2] == '1') {
+    std::unique_lock<std::mutex> ul(HookListenerLok);
+    bool crownDisplay = false;
+    monsterMessages[monster] = (*Configs).RatioMessages;
+    monsterChecked[monster] = {false, false};
   }
-
-  LOG(INFO) << "Health notes loading";
-  nlohmann::json ConfigFile = nlohmann::json::object();
-  file >> ConfigFile;
-
-	language = ConfigFile["Language"];
-    displayHealth = ConfigFile["DisplayHealth"];
-    displayCapture = ConfigFile["DisplayCapture"];
-    displayCrown = ConfigFile["DisplayCrown"];
-    onlyGold = ConfigFile["OnlyDisplayGoldCrown"];
-	omessages[0] = ConfigFile["Capture"];
-	omessages[1] = ConfigFile["Bigcrown"];
-	omessages[2] = ConfigFile["Bigsilver"];
-	omessages[3] = ConfigFile["Smallcrown"];
-	omessages[4] = ConfigFile["Normalsize"];
-	for (auto obj : ConfigFile["RatioMessages"])
-	{
-		messages.push({ obj["ratio"], obj["msg"] });
-	}
-	int index = 0;
-	for (auto obj : ConfigFile["Monsters"])
-	{
-		index = obj["Id"];
-		monsters[index].Id = obj["Id"];
-		if (language == "us") {
-			monsters[index].Name = obj["USName"];
-		}
-		else if (language == "jp") {
-			monsters[index].Name = obj["JPName"];
-		}
-		else {
-			monsters[index].Name = obj["Name"];
-		}
-		monsters[index].Capture = obj["Capture"];
-		monsters[index].Mini = obj["Mini"];
-		monsters[index].Silver = obj["Silver"];
-		monsters[index].Gold = obj["Gold"];
-		index++;
-	}
+}
+static std::map<void *, std::thread::id> monsterThread;
+static std::mutex Sizelock;
+static std::mutex Removelock;
+__declspec(dllexport) extern bool Load() {
+  ConfigLoading();
 
   auto uenemy_ctor_addr = find_func(sig::monster_ctor);
   auto uenemy_reset_addr = find_func(sig::monster_reset);
@@ -226,11 +420,8 @@ __declspec(dllexport) extern bool Load() {
   auto message_instance_addr = find_func(sig::chat_instance_source);
   if (!uenemy_ctor_addr || !show_message_addr || !message_instance_addr || !uenemy_reset_addr)
     return false;
-
   show_message = reinterpret_cast<decltype(show_message)>(*show_message_addr);
   chat_instance = get_lea_addr(*message_instance_addr + CHAT_INSTANCE_OFFSET);
-  log(INFO, "chat_instance:{:p}", chat_instance);
-
   MH_Initialize();
 
   Hook<void *(void *, int, int)>::hook(*uenemy_ctor_addr, [](auto orig, auto this_, auto id, auto subid) {
@@ -238,36 +429,36 @@ __declspec(dllexport) extern bool Load() {
     handleMonsterCreated(id, this_);
     return ret;
   });
+
+  // Hook to enemy reset
   Hook<void *(void *)>::hook(*uenemy_reset_addr, [](auto orig, auto this_) {
     {
-      std::unique_lock l(lock);
-      if (monsterMessages.erase(this_)) {
-        log(INFO, "Monster {:p} removed", this_);
-      }
+      std::unique_lock ul(Removelock);
+      monsterMessages.erase(this_);
       monsterChecked.erase(this_);
+      monsters.erase(this_);
+      monsterThread.erase(this_);
     }
     return orig(this_);
   });
 
   std::thread([]() {
     while (true) {
-      std::this_thread::sleep_for(std::chrono::seconds(2));
       {
-        std::unique_lock l(lock);
-        for (auto [monster, queue] : monsterMessages) {
-          checkHealth(monster);
+        std::unique_lock ul(Sizelock);
+        for (auto [monster, checked] : monsterChecked) {
+          if (!monsterThread.contains(monster)) {
+            std::thread t(SingleThreadFunction, monster);
+            t.detach();
+            monsterThread[monster] = t.get_id();
+          }
         }
-        if (isInit && displayCrown) {
-			for (auto [monster, isChecked] : monsterChecked) {
-				if (!isChecked) {
-					checkMonsterSize(monster);
-					monsterChecked[monster] = true;
-				}
-			}
-		}
       }
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
   }).detach();
+
+   
 
   MH_ApplyQueued();
 
@@ -275,7 +466,9 @@ __declspec(dllexport) extern bool Load() {
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
-  if (ul_reason_for_call == DLL_PROCESS_ATTACH)
+  if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
     return Load();
+  }
+
   return TRUE;
 }
