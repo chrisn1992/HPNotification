@@ -5,32 +5,34 @@
 #include "plugin-utils.h"
 #include "signatures.h"
 #include "supplemental.cpp"
+#include <condition_variable>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <mutex>
 #include <queue>
 #include <windows.h>
-
 std::string_view plugin::module_name = "HPNotification";
 
 using namespace loader;
 using namespace plugin;
 
 using json = nlohmann::json;
+static std::mutex slthreadLock;
+static std::mutex HookListenerLok;
+
 static struct HPNNS::Config *Configs = new HPNNS::Config();
 static std::map<void *, std::vector<HPNNS::RatioMessage>> monsterMessages;
 static std::map<void *, HPNNS::Monster> monsters;
 static std::map<void *, std::pair<bool, bool>> monsterChecked;
 static int intervalBase, interval, hp, percent = 0;
-static std::mutex thread0;
-static std::mutex thread1;
-static std::mutex thread2;
 const int UENEMY_LEA_VFT_OFFSET = 0x43;
 const int CHAT_INSTANCE_OFFSET = 0x4d;
 static void *chat_instance = nullptr;
 static void (*show_message)(void *, const char *, float, unsigned int, char) = nullptr;
+
 static bool (*CallBack)(void *monster) = nullptr;
+
 void showMessage(std::string message) { show_message(*(void **)chat_instance, message.c_str(), -1, -1, 0); }
 
 void showMessage(std::string message, char param3) {
@@ -76,7 +78,6 @@ void DisplayFinalMessage(std::string &captureMessage, std::string &hpMessage, HP
     }
     hpMessage = std::format("{}\r\nHP: <STYL MOJI_GREEN_DEFAULT>{:.0f}</STYL>/<STYL MOJI_GREEN_DEFAULT>{:.0f}</STYL>",
                             hpMessage, health, maxHealth);
-
     showMessage(hpMessage, 2);
     (Monster)->prevValue = newValue;
   }
@@ -84,27 +85,27 @@ void DisplayFinalMessage(std::string &captureMessage, std::string &hpMessage, HP
 
 int BuildMonsterInformation(void *&monster, HPNNS::Monster *Monster, float &health, float &maxHealth,
                             std::vector<HPNNS::RatioMessage> &monsterQueue, float &hpRatio) {
+
   bool validMonster = monsterMessages.contains(monster);
-  if (!validMonster)
+  if (!validMonster) {
     return -1;
+  }
+
   void *healthMgr = *offsetPtr<void *>(monster, 0x7670);
   health = *offsetPtr<float>(healthMgr, 0x64);
   maxHealth = *offsetPtr<float>(healthMgr, 0x60);
-  monsterQueue = monsterMessages[monster];
+  //monsterQueue = monsterMessages[monster];
+
   if (Monster->isPending) {
     return 0;
   }
 
-  // if (health == 100 && maxHealth == 100) {
-  //   Monster->MaxHealth = -1;
-  //   return 0;
-  // }
   hpRatio = (health / maxHealth);
   if (hpRatio <= 0.05f) {
 
     return -1;
   }
-  std::string hpText = std::format("{} : {:.2f}/{:.2f} ({:.2f}%)", Monster->Name, health, maxHealth, hpRatio);
+ // std::string hpText = std::format("{} : {:.2f}/{:.2f} ({:.2f}%)", Monster->Name, health, maxHealth, hpRatio);
   return 1;
 }
 
@@ -129,7 +130,7 @@ void RevalidateMaxHP(HPNNS::Monster *Monster, float maxHealth, void *&monster) {
   }
 }
 
- bool checkHealthQueue(void *monster) {
+bool checkHealthQueue(void *monster) {
   HPNNS::Monster &Monster = monsters[monster];
   std::vector<HPNNS::RatioMessage> &monsterQueue(Configs->RatioMessages);
 
@@ -197,7 +198,7 @@ bool checkHealthInterval(void *monster) {
   return true;
 }
 
- bool checkHealthHP(void *monster) {
+bool checkHealthHP(void *monster) {
   HPNNS::Monster &Monster = monsters[monster];
   std::vector<HPNNS::RatioMessage> &monsterQueue(Configs->RatioMessages);
 
@@ -224,7 +225,7 @@ bool checkHealthInterval(void *monster) {
   return true;
 }
 
- bool checkHealthPerc(void *monster) {
+bool checkHealthPerc(void *monster) {
   HPNNS::Monster &Monster = monsters[monster];
   std::vector<HPNNS::RatioMessage> &monsterQueue(Configs->RatioMessages);
 
@@ -291,7 +292,7 @@ void checkMonsterSize(void *monster) {
                      format("{}<STYL MOJI_BLUE_DEFAULT>({} at {}%)</STYL>", Monster.Name, capu, Monster.Capture));
       } else {
         capu = "Uncapturable";
-        size.replace(pos, re.length(), format("{}<STYL MOJI_BLACK_DEFAULT>({})</STYL>", Monster.Name, capu));
+        size.replace(pos, re.length(), format("{}<STYL MOJI_WHITE_DISABLE>({})</STYL>", Monster.Name, capu));
       }
     }
     if (show) {
@@ -359,36 +360,27 @@ bool ConfigLoading() {
   }
 }
 
-std::mutex slthreadLock;
 void SingleThreadFunction(void *const monster) {
   bool validMonster = true;
-
+  validMonster = monsterChecked.contains(monster);
   while (validMonster) {
-    int validInter = round((*Configs).TypeValue * (*Configs).RatioMessages.size() / 100);
-    validInter = validInter < 2000 ? 2000 : validInter;
+    int validInter = Configs->TypeValue; // round((*Configs).TypeValue * (*Configs).RatioMessages.size() / 100);
+    validInter = validInter < 2500 ? 2500 : validInter;
+    std::this_thread::sleep_for(std::chrono::milliseconds(validInter));
     {
-      std::unique_lock ul(slthreadLock);
-      if (!monsters.contains(monster) && monsterChecked.contains(monster)) {
-        int monsterId = *offsetPtr<int>(monster, 0x12280);
-        auto list = Configs->Monsters;
-        const auto it = std::find_if(list.begin(), list.end(),
-                                     [monsterId](const HPNNS::Monster &mon) { return mon.Id == monsterId; });
-        auto mon = *it;
-        monsters[monster] = mon;
-      }
-      
       CallBack(monster);
       auto &checked = monsterChecked[monster];
-      if (checked.first && !checked.second) {
-        checkMonsterSize(monster);
-        checked.second = true;
+      if (checked.first) {
+        if (!checked.second) {
+          checkMonsterSize(monster);
+          checked.second = true;
+        }
       }
-      validMonster = monsterMessages.contains(monster);
+      validMonster = monsterChecked.contains(monster);
       if (!validMonster) {
         return;
       }
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(validInter));
   }
 }
 
@@ -398,21 +390,43 @@ byte *get_lea_addr(byte *addr) {
   return base_addr + offset;
 }
 
-static std::mutex HookListenerLok;
 void handleMonsterCreated(int id, void *monster) {
-  char *monsterPath = offsetPtr<char>(monster, 0x7741);
-  if (monsterPath[2] == '0' || monsterPath[2] == '1') {
-    std::unique_lock<std::mutex> ul(HookListenerLok);
-    bool crownDisplay = false;
-    monsterMessages[monster] = (*Configs).RatioMessages;
-    monsterChecked[monster] = {false, false};
-  }
+  std::thread([id,monster]() {
+    char *monsterPath = offsetPtr<char>(monster, 0x7741);
+    if (monsterPath[2] == '0' || monsterPath[2] == '1') {
+      {
+        std::unique_lock ul(HookListenerLok);
+        // conditionRace.wait(ul);
+        monsterMessages[monster] = (*Configs).RatioMessages;
+        monsterChecked[monster] = {false, false};
+        if (!monsters.contains(monster)) {
+          {
+            auto list = Configs->Monsters;
+            const auto it =
+                std::find_if(list.begin(), list.end(), [id](const HPNNS::Monster &mon) { return mon.Id == id; });
+            HPNNS::Monster mon = *it;
+            if (mon.Name.empty() || mon.Id == 0) {
+              return;
+            }
+            monsters[monster] = mon;
+
+            std::thread t(SingleThreadFunction, monster);
+            t.detach();
+          }
+        }
+      }
+    }
+  }).detach();
 }
-static std::map<void *, std::thread::id> monsterThread;
-static std::mutex Sizelock;
-static std::mutex Removelock;
+
 __declspec(dllexport) extern bool Load() {
-  ConfigLoading();
+  std::thread([]() {
+    while (true) {
+      std::unique_lock ul(slthreadLock);
+      ConfigLoading();
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+  }).detach();
 
   auto uenemy_ctor_addr = find_func(sig::monster_ctor);
   auto uenemy_reset_addr = find_func(sig::monster_reset);
@@ -432,33 +446,20 @@ __declspec(dllexport) extern bool Load() {
 
   // Hook to enemy reset
   Hook<void *(void *)>::hook(*uenemy_reset_addr, [](auto orig, auto this_) {
-    {
-      std::unique_lock ul(Removelock);
-      monsterMessages.erase(this_);
-      monsterChecked.erase(this_);
-      monsters.erase(this_);
-      monsterThread.erase(this_);
-    }
-    return orig(this_);
-  });
-
-  std::thread([]() {
-    while (true) {
-      {
-        std::unique_lock ul(Sizelock);
-        for (auto [monster, checked] : monsterChecked) {
-          if (!monsterThread.contains(monster)) {
-            std::thread t(SingleThreadFunction, monster);
-            t.detach();
-            monsterThread[monster] = t.get_id();
-          }
+    auto ret = orig(this_);
+    std::thread([this_]() {
+      if (monsterChecked.contains(this_)) {
+        {
+          std::unique_lock ul(HookListenerLok);
+          // conditionRace.wait(ul);
+          monsterMessages.erase(this_);
+          monsterChecked.erase(this_);
+          monsters.erase(this_);
         }
       }
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    }
-  }).detach();
-
-   
+    }).detach();
+    return ret;
+  });
 
   MH_ApplyQueued();
 
