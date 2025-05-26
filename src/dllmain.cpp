@@ -94,18 +94,22 @@ int BuildMonsterInformation(void *&monster, HPNNS::Monster *Monster, float &heal
   void *healthMgr = *offsetPtr<void *>(monster, 0x7670);
   health = *offsetPtr<float>(healthMgr, 0x64);
   maxHealth = *offsetPtr<float>(healthMgr, 0x60);
-  //monsterQueue = monsterMessages[monster];
+  // monsterQueue = monsterMessages[monster];
 
   if (Monster->isPending) {
     return 0;
   }
 
   hpRatio = (health / maxHealth);
+  if (Configs->EnableLogging) {
+    LOG(INFO) << "Monster Information Loaded: " << Monster->Name << " Health: " << health << " MaxHealth: " << maxHealth
+              << " hp ratio: " << hpRatio << "\r\n";
+  }
   if (hpRatio <= 0.05f) {
 
     return -1;
   }
- // std::string hpText = std::format("{} : {:.2f}/{:.2f} ({:.2f}%)", Monster->Name, health, maxHealth, hpRatio);
+  // std::string hpText = std::format("{} : {:.2f}/{:.2f} ({:.2f}%)", Monster->Name, health, maxHealth, hpRatio);
   return 1;
 }
 
@@ -116,8 +120,16 @@ void ProcessDisplayMessage(std::string &hpMessage, std::vector<HPNNS::RatioMessa
 
   ValidateAndBuildMessageString(hpMessage, monsterQueue, monsterNameReplacer, &*Monster, hpRatioReplacer, hpRatio,
                                 captureMessage);
-
+  if (Configs->EnableLogging) {
+    LOG(INFO) << "Monster Message Build: " << Monster->Name << " Health: " << health << " MaxHealth: " << maxHealth
+              << " hp ratio: " << hpRatio << "\r\n";
+  }
   DisplayFinalMessage(captureMessage, hpMessage, &*Monster, health, maxHealth, newValue);
+  if (Configs->EnableLogging) {
+
+    LOG(INFO) << "Monster Message Display: " << Monster->Name << " Health: " << health << " MaxHealth: " << maxHealth
+              << " hp ratio: " << hpRatio << "\r\n";
+  }
 }
 
 void RevalidateMaxHP(HPNNS::Monster *Monster, float maxHealth, void *&monster) {
@@ -127,6 +139,9 @@ void RevalidateMaxHP(HPNNS::Monster *Monster, float maxHealth, void *&monster) {
     Monster->MaxHealth = intMaxHealth;
     monsterChecked[monster].first = true;
     (Monster)->prevValue = -1;
+  }
+  if (Configs->EnableLogging) {
+    LOG(INFO) << "Monster Max HP validate: " << Monster->Name << " MaxHealth: " << maxHealth << "\r\n";
   }
 }
 
@@ -264,7 +279,9 @@ void checkMonsterSize(void *monster) {
     }
     float monsterSizeMultiplier = static_cast<float>(std::round(sizeMultiplier / sizeModifier * 100.0f)) / 100.0f;
     HPNNS::Monster Monster = monsters[monster];
-
+    if (Configs->EnableLogging) {
+      LOG(INFO) << Monster.Name << " size check: " << monsterSizeMultiplier << " mon id: " << monsterId << "\r\n";
+    }
     std::string size;
     if (monsterSizeMultiplier >= Monster.Gold) {
       size = (*Configs).Bigcrown;
@@ -364,8 +381,12 @@ void SingleThreadFunction(void *const monster) {
   bool validMonster = true;
   validMonster = monsterChecked.contains(monster);
   while (validMonster) {
+
     int validInter = Configs->TypeValue; // round((*Configs).TypeValue * (*Configs).RatioMessages.size() / 100);
     validInter = validInter < 2500 ? 2500 : validInter;
+    if (Configs->EnableLogging) {
+      LOG(INFO) << "Monster thread running routine interval " << validInter << "\r\n";
+    }
     std::this_thread::sleep_for(std::chrono::milliseconds(validInter));
     {
       CallBack(monster);
@@ -391,7 +412,7 @@ byte *get_lea_addr(byte *addr) {
 }
 
 void handleMonsterCreated(int id, void *monster) {
-  std::thread([id,monster]() {
+  std::thread([id, monster]() {
     char *monsterPath = offsetPtr<char>(monster, 0x7741);
     if (monsterPath[2] == '0' || monsterPath[2] == '1') {
       {
@@ -412,8 +433,14 @@ void handleMonsterCreated(int id, void *monster) {
 
             std::thread t(SingleThreadFunction, monster);
             t.detach();
+            if (Configs->EnableLogging) {
+              LOG(INFO) << "Monster loaded: " << id << "+" << mon.Name << "\r\n";
+            }
           }
         }
+      }
+      if (Configs->EnableLogging) {
+        LOG(INFO) << "Monster created: " << id << "\r\n";
       }
     }
   }).detach();
@@ -427,7 +454,9 @@ __declspec(dllexport) extern bool Load() {
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
   }).detach();
-
+  if (Configs->EnableLogging) {
+    LOG(INFO) << "Config loaded" << "\r\n";
+  }
   auto uenemy_ctor_addr = find_func(sig::monster_ctor);
   auto uenemy_reset_addr = find_func(sig::monster_reset);
   auto show_message_addr = find_func(sig::show_message);
@@ -455,6 +484,9 @@ __declspec(dllexport) extern bool Load() {
           monsterMessages.erase(this_);
           monsterChecked.erase(this_);
           monsters.erase(this_);
+          if (Configs->EnableLogging) {
+            LOG(INFO) << "Monster erased" << "\r\n";
+          }
         }
       }
     }).detach();
@@ -468,6 +500,7 @@ __declspec(dllexport) extern bool Load() {
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
   if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
+    LOG(INFO) << "DLL PROCESS ATTACHED" << "\r\n";
     return Load();
   }
 
