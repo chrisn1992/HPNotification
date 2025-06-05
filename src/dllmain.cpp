@@ -1,4 +1,3 @@
-// dllmain.cpp : Définit le point d'entrée de l'application DLL.
 #include "MinHook.h"
 #include "json.hpp"
 #include "loader.h"
@@ -377,9 +376,29 @@ bool ConfigLoading() {
   }
 }
 
+void RemoveMonsterFromMemory(void *const &monster) {
+  try {
+    monsters.erase(monster);
+  } catch (const std::exception &e) {
+    LOG(INFO) << "Exception occurred while erasing monster: " << e.what() << "\r\n";
+  }
+
+  try {
+    monsterMessages.erase(monster);
+  } catch (const std::exception &e) {
+    LOG(INFO) << "Exception occurred while erasing monster: " << e.what() << "\r\n";
+  }
+
+  try {
+    monsterChecked.erase(monster);
+  } catch (const std::exception &e) {
+    LOG(INFO) << "Exception occurred while erasing monster: " << e.what() << "\r\n";
+  }
+}
+
 void SingleThreadFunction(void *const monster) {
   bool validMonster = true;
-  validMonster = monsterChecked.contains(monster);
+
   while (validMonster) {
 
     int validInter = Configs->TypeValue; // round((*Configs).TypeValue * (*Configs).RatioMessages.size() / 100);
@@ -389,6 +408,20 @@ void SingleThreadFunction(void *const monster) {
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(validInter));
     {
+      if (!monsters.contains(monster)) {
+        int id = *offsetPtr<int>(monster, 0x12280);
+        auto list = Configs->Monsters;
+        const auto it =
+            std::find_if(list.begin(), list.end(), [id](const HPNNS::Monster &mon) { return mon.Id == id; });
+        HPNNS::Monster mon = *it;
+        if (mon.Name.empty() || mon.Id == 0) {
+          return;
+        }
+        monsters[monster] = mon;
+        monsterMessages[monster] = (*Configs).RatioMessages;
+        monsterChecked[monster] = {false, false};
+      }
+
       CallBack(monster);
       auto &checked = monsterChecked[monster];
       if (checked.first) {
@@ -403,6 +436,8 @@ void SingleThreadFunction(void *const monster) {
       }
     }
   }
+
+  RemoveMonsterFromMemory(monster);
 }
 
 byte *get_lea_addr(byte *addr) {
@@ -411,49 +446,11 @@ byte *get_lea_addr(byte *addr) {
   return base_addr + offset;
 }
 
-void handleMonsterCreated(int id, void *monster) {
-  std::thread([id, monster]() {
-    char *monsterPath = offsetPtr<char>(monster, 0x7741);
-    if (monsterPath[2] == '0' || monsterPath[2] == '1') {
-      {
-        std::unique_lock ul(HookListenerLok);
-        // conditionRace.wait(ul);
-        monsterMessages[monster] = (*Configs).RatioMessages;
-        monsterChecked[monster] = {false, false};
-        if (!monsters.contains(monster)) {
-          {
-            auto list = Configs->Monsters;
-            const auto it =
-                std::find_if(list.begin(), list.end(), [id](const HPNNS::Monster &mon) { return mon.Id == id; });
-            HPNNS::Monster mon = *it;
-            if (mon.Name.empty() || mon.Id == 0) {
-              return;
-            }
-            monsters[monster] = mon;
-
-            std::thread t(SingleThreadFunction, monster);
-            t.detach();
-            if (Configs->EnableLogging) {
-              LOG(INFO) << "Monster loaded: " << id << "+" << mon.Name << "\r\n";
-            }
-          }
-        }
-      }
-      if (Configs->EnableLogging) {
-        LOG(INFO) << "Monster created: " << id << "\r\n";
-      }
-    }
-  }).detach();
-}
 
 __declspec(dllexport) extern bool Load() {
-  std::thread([]() {
-    while (true) {
-      std::unique_lock ul(slthreadLock);
-      ConfigLoading();
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    }
-  }).detach();
+
+  ConfigLoading();
+
   if (Configs->EnableLogging) {
     LOG(INFO) << "Config loaded" << "\r\n";
   }
@@ -469,7 +466,27 @@ __declspec(dllexport) extern bool Load() {
 
   Hook<void *(void *, int, int)>::hook(*uenemy_ctor_addr, [](auto orig, auto this_, auto id, auto subid) {
     auto ret = orig(this_, id, subid);
-    handleMonsterCreated(id, this_);
+    std::thread([id, this_]() {
+      char *monsterPath = offsetPtr<char>(this_, 0x7741);
+      if (monsterPath[2] == '0' || monsterPath[2] == '1') {
+        {
+          std::unique_lock ul(HookListenerLok);
+          // conditionRace.wait(ul);
+          if (!monsters.contains(this_)) {
+            {
+              std::thread t(SingleThreadFunction, this_);
+              t.detach();
+              if (Configs->EnableLogging) {
+                LOG(INFO) << "Monster loaded: " << id << "+" << this_ << "\r\n";
+              }
+            }
+          }
+        }
+        if (Configs->EnableLogging) {
+          LOG(INFO) << "Monster created: " << id << "\r\n";
+        }
+      }
+    }).detach();
     return ret;
   });
 
@@ -480,10 +497,7 @@ __declspec(dllexport) extern bool Load() {
       if (monsterChecked.contains(this_)) {
         {
           std::unique_lock ul(HookListenerLok);
-          // conditionRace.wait(ul);
-          monsterMessages.erase(this_);
-          monsterChecked.erase(this_);
-          monsters.erase(this_);
+          RemoveMonsterFromMemory(this_);
           if (Configs->EnableLogging) {
             LOG(INFO) << "Monster erased" << "\r\n";
           }
